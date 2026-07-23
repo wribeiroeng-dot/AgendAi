@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgendAi - Agenda Interativa</title>
+  
+  <!-- Fonte Premium Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta Azul Marinho Luxo & Dourado */
+      --bg: #0b132b;
+      --card-bg: #1c2541;
+      --card-border: rgba(212, 175, 55, 0.2);
+      --accent: #d4af37; 
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #0f172a;
+      
+      /* Cores de Status */
+      --status-confirmed: #22c55e; /* Verde */
+      --status-pending: #f59e0b;   /* Laranja */
+      --status-canceled: #ef4444;  /* Vermelho */
+      --status-blocked: #64748b;   /* Cinza */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 410px;
+      height: 780px; /* Altura fixa no container para manter menu fixo */
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-content {
+      padding: 24px 0 0 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* CABEÇALHO */
+    .page-header {
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .page-title { font-size: 20px; font-weight: 800; }
+    .month-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      background: rgba(212, 175, 55, 0.1);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* SELETOR DE DATAS HORIZONTAL */
+    .date-picker {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 20px 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    .date-picker::-webkit-scrollbar { display: none; }
+
+    .date-card {
+      min-width: 54px;
+      height: 72px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .date-card.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0b132b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+    .date-day-name { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+    .date-card.active .date-day-name { color: rgba(11, 19, 43, 0.7); }
+    .date-number { font-size: 18px; font-weight: 800; }
+
+    /* FILTROS DE STATUS */
+    .filters {
+      display: flex;
+      gap: 6px;
+      padding: 16px 20px;
+      flex-shrink: 0;
+    }
+    
+    .filter-btn {
+      flex: 1;
+      text-align: center;
+      padding: 6px 2px;
+      background: var(--input-bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      background: rgba(255,255,255,0.15);
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    /* LISTA DA AGENDA - SCROLL EXPANDIDO */
+    .agenda-list { 
+      padding: 0 20px 100px 20px; /* Padding inferior garante que o último card não fique escondido sob o menu */
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      overflow-y: auto;
+      flex: 1; /* Isso faz a lista preencher todo o espaço disponível até o final */
+      scrollbar-width: none;
+    }
+    .agenda-list::-webkit-scrollbar { display: none; }
+
+    .agenda-item {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .agenda-item::before {
+      content: '';
+      position: absolute;
+      left: 21px;
+      top: 30px;
+      bottom: -14px;
+      width: 2px;
+      background: rgba(255,255,255,0.05);
+      z-index: 0;
+    }
+    .agenda-item:last-child::before { display: none; }
+
+    .time-col {
+      min-width: 45px;
+      padding-top: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      z-index: 1;
+      background: var(--card-bg);
+    }
+
+    .card-col {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* BORDAS E ESTILOS DE STATUS */
+    .card-col.status-confirmed { border-left: 4px solid var(--status-confirmed); }
+    .card-col.status-pending { border-left: 4px solid var(--status-pending); }
+    .card-col.status-canceled { border-left: 4px solid var(--status-canceled); opacity: 0.6; }
+    .card-col.status-blocked { border-left: 4px solid var(--status-blocked); background: rgba(15, 23, 42, 0.6); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .client-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+    .service-name { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+
+    /* BADGES DE STATUS CLICÁVEIS */
+    .badge-btn {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .badge-btn:active { transform: scale(0.95); }
+
+    .badge-btn.status-confirmed { background: rgba(34, 197, 94, 0.15); color: var(--status-confirmed); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-btn.status-pending { background: rgba(245, 158, 11, 0.15); color: var(--status-pending); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-btn.status-canceled { background: rgba(239, 68, 68, 0.15); color: var(--status-canceled); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-btn.status-blocked { background: rgba(100, 116, 139, 0.2); color: var(--text-muted); border: 1px solid rgba(100, 116, 139, 0.3); }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      border-top: 1px dashed rgba(255,255,255,0.08);
+      padding-top: 10px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .action-btn:active { opacity: 0.8; }
+    
+    .btn-wa { background: rgba(34, 197, 94, 0.12); color: var(--status-confirmed); border-color: rgba(34, 197, 94, 0.2); }
+    .btn-wa svg { fill: currentColor; width: 14px; height: 14px; }
+
+    /* MODAL BOTTOM SHEET PARA MUDANÇA DE STATUS */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      background: #111a36;
+      border-top: 1px solid var(--card-border);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 30px 20px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+    .modal-overlay.active .bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      margin: 0 auto 16px auto;
+    }
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+    .sheet-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .status-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .status-option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .status-option-btn:active { background: rgba(255,255,255,0.08); }
+
+    .status-indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .dot-confirmed { background: var(--status-confirmed); box-shadow: 0 0 8px var(--status-confirmed); }
+    .dot-pending { background: var(--status-pending); box-shadow: 0 0 8px var(--status-pending); }
+    .dot-canceled { background: var(--status-canceled); box-shadow: 0 0 8px var(--status-canceled); }
+    .dot-blocked { background: var(--status-blocked); box-shadow: 0 0 8px var(--status-blocked); }
+
+    .option-label { display: flex; align-items: center; }
+
+    /* TOAST FEEDBACK */
+    .toast {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(34, 197, 94, 0.9);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 200;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* FLOATING ACTION BUTTON */
+    .fab-add {
+      position: absolute;
+      bottom: 90px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: var(--accent);
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #0b132b;
+      transition: transform 0.2s;
+      z-index: 10;
+    }
+    .fab-add:active { transform: scale(0.9); }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0; left: 0; width: 100%;
+      background: rgba(11, 19, 43, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 16px 10px 24px 10px;
+      border-radius: 0 0 28px 28px;
+      z-index: 20;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-item.active { color: var(--accent); }
+    .nav-item svg { fill: currentColor; width: 22px; height: 22px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Status atualizado!</div>
+    
+    <div class="main-content">
+      
+      <!-- Cabeçalho -->
+      <div class="page-header">
+        <h1 class="page-title">Agenda</h1>
+        <div class="month-selector">
+          Julho 2026
+          <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+        </div>
+      </div>
+
+      <!-- Seletor de Datas -->
+      <div class="date-picker">
+        <div class="date-card">
+          <span class="date-day-name">Seg</span>
+          <span class="date-number">20</span>
+        </div>
+        <div class="date-card">
+          <span class="date-day-name">Ter</span>
+          <span class="date-number">21</span>
+        </div>
+        <div class="date-card active">
+          <span class="date-day-name">Qua</span>
+          <span class="date-number">22</span>
+        </div>
+        <div class="date-card">
+          <span class="date-day-name">Qui</span>
+          <span class="date-number">23</span>
+        </div>
+        <div class="date-card">
+          <span class="date-day-name">Sex</span>
+          <span class="date-number">24</span>
+        </div>
+        <div class="date-card">
+          <span class="date-day-name">Sáb</span>
+          <span class="date-number">25</span>
+        </div>
+      </div>
+
+      <!-- Filtros Rápido -->
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterAgenda('all', this)">Todos</button>
+        <button class="filter-btn" onclick="filterAgenda('pending', this)">Pendentes</button>
+        <button class="filter-btn" onclick="filterAgenda('confirmed', this)">Confirmados</button>
+        <button class="filter-btn" onclick="filterAgenda('canceled', this)">Cancelados</button>
+      </div>
+
+      <!-- Lista de Agendamentos (Timeline) -->
+      <div class="agenda-list" id="agendaList">
+        
+        <!-- Agendamento 1 -->
+        <div class="agenda-item" data-id="1" data-status="confirmed">
+          <div class="time-col">09:00</div>
+          <div class="card-col status-confirmed" id="card-1">
+            <div class="card-header">
+              <div>
+                <div class="client-name" id="client-1">Maria Silva</div>
+                <div class="service-name" id="service-1">Corte & Design VIP</div>
+              </div>
+              <button class="badge-btn status-confirmed" id="badge-1" onclick="openStatusModal(1)">
+                Confirmado
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+              </button>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn btn-wa" onclick="openWA('Maria Silva', '09:00', 'Corte & Design VIP')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                Mensagem
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agendamento 2 -->
+        <div class="agenda-item" data-id="2" data-status="confirmed">
+          <div class="time-col">10:30</div>
+          <div class="card-col status-confirmed" id="card-2">
+            <div class="card-header">
+              <div>
+                <div class="client-name" id="client-2">Ana Carolina</div>
+                <div class="service-name" id="service-2">Coloração Premium</div>
+              </div>
+              <button class="badge-btn status-confirmed" id="badge-2" onclick="openStatusModal(2)">
+                Confirmado
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+              </button>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn btn-wa" onclick="openWA('Ana Carolina', '10:30', 'Coloração Premium')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                Mensagem
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agendamento 3 -->
+        <div class="agenda-item" data-id="3" data-status="blocked">
+          <div class="time-col">12:00</div>
+          <div class="card-col status-blocked" id="card-3">
+            <div class="card-header">
+              <div>
+                <div class="client-name" id="client-3">Horário de Almoço</div>
+                <div class="service-name" id="service-3">Bloqueio manual</div>
+              </div>
+              <button class="badge-btn status-blocked" id="badge-3" onclick="openStatusModal(3)">
+                Pausa
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agendamento 4 -->
+        <div class="agenda-item" data-id="4" data-status="pending">
+          <div class="time-col">14:00</div>
+          <div class="card-col status-pending" id="card-4">
+            <div class="card-header">
+              <div>
+                <div class="client-name" id="client-4">Pâmella</div>
+                <div class="service-name" id="service-4">Escova & Modelagem</div>
+              </div>
+              <button class="badge-btn status-pending" id="badge-4" onclick="openStatusModal(4)">
+                Pendente
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+              </button>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn btn-wa" onclick="openWA('Pâmella', '14:00', 'Escova & Modelagem')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                Mensagem
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Agendamento 5 -->
+        <div class="agenda-item" data-id="5" data-status="confirmed">
+          <div class="time-col">16:30</div>
+          <div class="card-col status-confirmed" id="card-5">
+            <div class="card-header">
+              <div>
+                <div class="client-name" id="client-5">Juliana</div>
+                <div class="service-name" id="service-5">Tratamento Completo</div>
+              </div>
+              <button class="badge-btn status-confirmed" id="badge-5" onclick="openStatusModal(5)">
+                Confirmado
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+              </button>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn btn-wa" onclick="openWA('Juliana', '16:30', 'Tratamento Completo')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                Mensagem
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL SELETOR DE STATUS -->
+    <div class="modal-overlay" id="statusModal" onclick="closeStatusModal(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title" id="modalClientTitle">Alterar Status</div>
+        <div class="sheet-subtitle" id="modalClientSubtitle">Selecione a situação deste horário</div>
+
+        <div class="status-options">
+          <button class="status-option-btn" onclick="applyStatusChange('confirmed')">
+            <span class="option-label">
+              <span class="status-indicator-dot dot-confirmed"></span>
+              Confirmado
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#22c55e"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
+          </button>
+          <button class="status-option-btn" onclick="applyStatusChange('pending')">
+            <span class="option-label">
+              <span class="status-indicator-dot dot-pending"></span>
+              Pendente (Aguardando)
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#f59e0b"><path d="m105-120 375-640 375 640H105Z"/></svg>
+          </button>
+          <button class="status-option-btn" onclick="applyStatusChange('canceled')">
+            <span class="option-label">
+              <span class="status-indicator-dot dot-canceled"></span>
+              Cancelado pelo Cliente / Profissional
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ef4444"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+          </button>
+          <button class="status-option-btn" onclick="applyStatusChange('blocked')">
+            <span class="option-label">
+              <span class="status-indicator-dot dot-blocked"></span>
+              Pausa / Horário Bloqueado
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#64748b"><path d="M240-200h120v-560H240v560Zm360 0h120v-560H600v560Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB BUTTON -->
+    <button class="fab-add" onclick="alert('Abrir modal de novo agendamento manual')">
+      <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+    </button>
+
+    <!-- MENU INFERIOR -->
+    <nav class="bottom-nav">
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+        Início
+      </a>
+      <a href="#" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
+        Agenda
+      </a>
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
+        Serviços
+      </a>
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+        Ajustes
+      </a>
+    </nav>
+  </div>
+
+  <script>
+    let currentEditingId = null;
+
+    const statusLabels = { confirmed: 'Confirmado', pending: 'Pendente', canceled: 'Cancelado', blocked: 'Pausa' };
+
+    const dateCards = document.querySelectorAll('.date-card');
+    dateCards.forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelector('.date-card.active').classList.remove('active');
+        card.classList.add('active');
+      });
+    });
+
+    function openStatusModal(id) {
+      currentEditingId = id;
+      const clientName = document.getElementById(`client-${id}`).innerText;
+      const serviceName = document.getElementById(`service-${id}`).innerText;
+      
+      document.getElementById('modalClientTitle').innerText = `Status: ${clientName}`;
+      document.getElementById('modalClientSubtitle').innerText = serviceName;
+      
+      document.getElementById('statusModal').classList.add('active');
+    }
+
+    function closeStatusModal(event) {
+      document.getElementById('statusModal').classList.remove('active');
+    }
+
+    function applyStatusChange(newStatus) {
+      if (!currentEditingId) return;
+
+      const id = currentEditingId;
+      const card = document.getElementById(`card-${id}`);
+      const badge = document.getElementById(`badge-${id}`);
+      const item = document.querySelector(`.agenda-item[data-id="${id}"]`);
+
+      item.setAttribute('data-status', newStatus);
+      card.className = 'card-col status-' + newStatus;
+      badge.className = 'badge-btn status-' + newStatus;
+
+      badge.innerHTML = `
+        ${statusLabels[newStatus]}
+        <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14" fill="currentColor"><path d="M480-360 280-560h400L480-360Z"/></svg>
+      `;
+
+      closeStatusModal();
+      showToast(`Status alterado para ${statusLabels[newStatus]}`);
+    }
+
+    function filterAgenda(filterType, btnElement) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      const items = document.querySelectorAll('.agenda-item');
+      items.forEach(item => {
+        const itemStatus = item.getAttribute('data-status');
+        if (filterType === 'all') {
+          item.style.display = 'flex';
+        } else if (filterType === itemStatus) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 2500);
+    }
+
+    function openWA(nomeCliente, horario, servico) {
+      const msg = `Olá ${nomeCliente}, passando pra confirmar seu horário hoje às ${horario}, ${servico}, no Studio Dezzinha! ✨`;
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
