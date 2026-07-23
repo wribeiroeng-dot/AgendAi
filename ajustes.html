@@ -587,7 +587,22 @@
         <div id="categoryManageList"></div>
       </div>
     </div>
+<!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
+<div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Editar Nome do Perfil</div>
+    
+    <form id="profileForm" onsubmit="handleProfileSubmit(event)">
+      <div class="form-group">
+        <label class="form-label">Nome de Exibição</label>
+        <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
+      </div>
 
+      <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
+    </form>
+  </div>
+</div>
     <!-- FAB BUTTON (Aparece apenas na aba Serviços) -->
     <button class="fab-add" id="fabAddService" onclick="openCreateServiceModal()">
       <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
