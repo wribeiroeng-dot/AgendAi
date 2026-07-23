@@ -49,7 +49,7 @@
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
-      z-index: 1000;
+      z-index: 2000;
       box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -74,7 +74,7 @@
       font-weight: 800;
       color: var(--accent);
       letter-spacing: -0.5px;
-      display: none; /* Exibido apenas no desktop */
+      display: none;
     }
 
     .nav-links {
@@ -240,6 +240,123 @@
       cursor: pointer; color: #0b132b; z-index: 99;
     }
 
+    /* MODAL DE BOAS-VINDAS (ONBOARDING OPCIONAL) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(11, 19, 43, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .modal-description {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 15px;
+      outline: none;
+    }
+    .input-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0b132b;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { color: var(--text-main); }
+
+    .modal-notice {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
     /* MEDIA QUERIES */
     @media (max-width: 1023px) {
       .layout-wrapper { flex-direction: column; }
@@ -277,7 +394,7 @@
       .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
       .nav-links { flex-direction: column; gap: 8px; height: 100%; }
       .nav-item { font-size: 15px; padding: 14px 16px; }
-      .nav-item.logout-item { margin-top: auto; } /* Coloca o botão Sair no rodapé do menu */
+      .nav-item.logout-item { margin-top: auto; }
       .main-container { padding: 40px; }
       .greeting-title { font-size: 28px; }
       .dashboard-layout-grid { grid-template-columns: 2fr 1fr; }
@@ -288,6 +405,31 @@
 <body>
 
   <div id="toast" class="toast">Link copiado com sucesso! ✅</div>
+
+  <!-- MODAL DE BOAS-VINDAS (OPCIONAL) -->
+  <div id="welcomeModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <h2 class="modal-title">Boas-vindas ao AgendAi!</h2>
+      <p class="modal-description">
+        Como você gostaria de ser chamado(a) ou qual o nome do seu estúdio?
+      </p>
+
+      <div class="input-group">
+        <label for="onboardingNome">Seu Nome / Estúdio</label>
+        <input type="text" id="onboardingNome" placeholder="Ex: Studio da Dezzinha ou Wellington">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="salvarNomeOnboarding()">Salvar e Continuar</button>
+        <button class="btn-secondary" onclick="fecharModalOnboarding()">Preencher depois com calma</button>
+      </div>
+
+      <p class="modal-notice">
+        ✨ <strong>Seu teste de 7 dias grátis já está ativo!</strong> Você pode alterar seus dados a qualquer momento no menu <em>Ajustes</em>.
+      </p>
+    </div>
+  </div>
 
   <div class="layout-wrapper">
     <!-- NAVEGAÇÃO -->
@@ -386,20 +528,7 @@
                 </div>
               </div>
               <button class="btn-wa-action" onclick="openWA('Ana Carolina', '10:30', 'Coloração Premium')" title="Enviar lembrete">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-              </button>
-            </div>
-
-            <div class="client-card">
-              <div class="client-info-wrapper">
-                <div class="client-time">14:00</div>
-                <div>
-                  <div class="client-name">Pâmella</div>
-                  <div class="client-service">Escova & Modelagem</div>
-                </div>
-              </div>
-              <button class="btn-wa-action" onclick="openWA('Pâmella', '14:00', 'Escova & Modelagem')" title="Enviar lembrete">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
               </button>
             </div>
           </div>
@@ -418,57 +547,95 @@
     const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 2. GUARDA DE ROTA E CARREGAMENTO DOS DADOS DO USUÁRIO
+    let usuarioAtual = null;
+
+    // 2. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
     async function checarAutenticacao() {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
-      // TRAVA DE SEGURANÇA: Se não estiver logado, manda pro login
       if (error || !session) {
         window.location.href = "login.html";
         return;
       }
 
-      // Atualiza a Data Dinâmica na tela
+      usuarioAtual = session.user;
       atualizarDataAtual();
 
-      // Busca perfil no banco
+      // Busca dados na tabela 'perfis'
       const { data: perfil } = await supabaseClient
         .from('perfis')
         .select('nome, email')
-        .eq('id', session.user.id)
+        .eq('id', usuarioAtual.id)
         .single();
 
-      // Define a saudação usando o Nome do perfil ou a primeira parte do E-mail
       const greetingTitle = document.getElementById('greetingTitle');
-      if (perfil) {
-        const nomeExibicao = perfil.nome || perfil.email.split('@')[0];
-        greetingTitle.innerText = `Olá, ${nomeExibicao}! ✨`;
+
+      // Se o usuário já tiver cadastrado o nome:
+      if (perfil && perfil.nome) {
+        greetingTitle.innerText = `Olá, ${perfil.nome}! ✨`;
       } else {
-        greetingTitle.innerText = `Olá! ✨`;
+        // Caso não tenha nome, usa saudação genérica e exibe o modal opcional
+        greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
+        abrirModalOnboarding();
       }
     }
 
-    // Formata a data de hoje (ex: "Quinta-feira, 23 Julho")
+    // 3. GERENCIAMENTO DO MODAL DE ONBOARDING
+    function abrirModalOnboarding() {
+      const modal = document.getElementById('welcomeModal');
+      modal.classList.add('active');
+    }
+
+    function fecharModalOnboarding() {
+      const modal = document.getElementById('welcomeModal');
+      modal.classList.remove('active');
+    }
+
+    async function salvarNomeOnboarding() {
+      const nomeDigitado = document.getElementById('onboardingNome').value.trim();
+
+      if (!nomeDigitado) {
+        exibirToast("Digite um nome ou clique em 'Preencher depois'");
+        return;
+      }
+
+      // Atualiza ou insere o perfil no Supabase
+      const { error } = await supabaseClient
+        .from('perfis')
+        .upsert({
+          id: usuarioAtual.id,
+          email: usuarioAtual.email,
+          nome: nomeDigitado,
+          status: 'ativo'
+        });
+
+      if (error) {
+        console.error("Erro ao salvar:", error);
+        exibirToast("Erro ao salvar. Tente novamente.");
+        return;
+      }
+
+      // Atualiza a saudação na tela instantaneamente
+      document.getElementById('greetingTitle').innerText = `Olá, ${nomeDigitado}! ✨`;
+      fecharModalOnboarding();
+      exibirToast("Perfil atualizado com sucesso! 🎉");
+    }
+
+    // 4. FUNÇÕES UTILITÁRIAS
     function atualizarDataAtual() {
       const hoje = new Date();
       const opcoes = { weekday: 'long', day: 'numeric', month: 'long' };
       let dataFormatada = hoje.toLocaleDateString('pt-BR', opcoes);
       dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
       
-      const greetingDate = document.getElementById('greetingDate');
-      if (greetingDate) greetingDate.innerText = dataFormatada;
+      document.getElementById('greetingDate').innerText = dataFormatada;
     }
 
-    // 3. FUNÇÃO DE LOGOUT
     async function fazerLogout() {
       await supabaseClient.auth.signOut();
       window.location.href = "login.html";
     }
 
-    // Executa a validação imediatamente ao carregar a página
-    checarAutenticacao();
-
-    // 4. FUNÇÕES INTERATIVAS DA TELA
     function toggleAgenda() {
       const toggle = document.getElementById('agendaToggle');
       const text = document.getElementById('statusText');
@@ -484,9 +651,7 @@
     function copyLink() {
       const fakeLink = "https://agend.ai/studiodezzinha";
       navigator.clipboard.writeText(fakeLink).then(() => {
-        const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        exibirToast("Link copiado com sucesso! ✅");
       });
     }
 
@@ -495,6 +660,16 @@
       const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
+
+    function exibirToast(mensagem) {
+      const toast = document.getElementById('toast');
+      toast.innerText = mensagem;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
+    // Inicializa a verificação
+    checarAutenticacao();
   </script>
 </body>
 </html>
