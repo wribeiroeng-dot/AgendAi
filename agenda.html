@@ -451,7 +451,13 @@
         height: 100vh;
         overflow: hidden; /* Evita scroll geral na tela */
       }
-      .main-container { padding-bottom: 90px; height: 100vh; }
+      .main-container { 
+        padding: 0 !important; /* Remove o padding padrão para colar nas bordas */
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
       .app-navigation {
         position: fixed;
         bottom: 0; left: 0; right: 0;
