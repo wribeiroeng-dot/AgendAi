@@ -446,7 +446,11 @@
 
     /* RESPONSIVIDADE (Mobile vs Desktop igual Home) */
     @media (max-width: 1023px) {
-      .layout-wrapper { flex-direction: column; }
+      .layout-wrapper { 
+        flex-direction: column; 
+        height: 100vh;
+        overflow: hidden; /* Evita scroll geral na tela */
+      }
       .main-container { padding-bottom: 90px; height: 100vh; }
       .app-navigation {
         position: fixed;
