@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgendAi - Painel de Controle</title>
   
+  <!-- SUPABASE SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -90,10 +93,15 @@
       padding: 12px 16px;
       border-radius: 12px;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
     .nav-item:hover, .nav-item.active {
       color: var(--accent);
       background: rgba(212, 175, 55, 0.1);
+    }
+    .nav-item.logout-item:hover {
+      color: var(--status-offline);
+      background: rgba(239, 68, 68, 0.1);
     }
     .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
 
@@ -232,16 +240,10 @@
       cursor: pointer; color: #0b132b; z-index: 99;
     }
 
-    /* =========================================================
-       MEDIA QUERIES - REGRAS ADAPTATIVAS PARA CADA DISPOSITIVO
-       ========================================================= */
-
-    /* 📱 DISPOSITIVOS MÓVEIS (Até 1023px) - Estilo App */
+    /* MEDIA QUERIES */
     @media (max-width: 1023px) {
       .layout-wrapper { flex-direction: column; }
-      
       .main-container { padding-bottom: 90px; }
-
       .app-navigation {
         position: fixed;
         bottom: 0; left: 0; right: 0;
@@ -254,20 +256,16 @@
         align-items: center;
         padding: 0 10px;
       }
-
       .nav-links { justify-content: space-around; }
-
       .nav-item {
         flex-direction: column;
         gap: 4px;
         font-size: 11px;
         padding: 6px 12px;
       }
-
       .btn-copy { width: 100%; justify-content: center; margin-bottom: 20px; }
     }
 
-    /* 💻 DESKTOP / NOTEBOOK (A partir de 1024px) - Estilo Sistema */
     @media (min-width: 1024px) {
       .app-navigation {
         width: var(--sidebar-width);
@@ -276,21 +274,13 @@
         position: sticky;
         top: 0; height: 100vh;
       }
-
       .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
-
-      .nav-links { flex-direction: column; gap: 8px; }
-
+      .nav-links { flex-direction: column; gap: 8px; height: 100%; }
       .nav-item { font-size: 15px; padding: 14px 16px; }
-
+      .nav-item.logout-item { margin-top: auto; } /* Coloca o botão Sair no rodapé do menu */
       .main-container { padding: 40px; }
-
       .greeting-title { font-size: 28px; }
-
-      .dashboard-layout-grid {
-        grid-template-columns: 2fr 1fr; /* Painel com 2 colunas no desktop */
-      }
-
+      .dashboard-layout-grid { grid-template-columns: 2fr 1fr; }
       .fab-add { bottom: 40px; right: 40px; }
     }
   </style>
@@ -300,7 +290,7 @@
   <div id="toast" class="toast">Link copiado com sucesso! ✅</div>
 
   <div class="layout-wrapper">
-    <!-- NAVEGAÇÃO (Sidebar no Desktop / Barra Inferior no Mobile) -->
+    <!-- NAVEGAÇÃO -->
     <nav class="app-navigation">
       <div class="brand-logo">AgendAi.</div>
       <div class="nav-links">
@@ -320,6 +310,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
           Ajustes
         </a>
+        <a onclick="fazerLogout()" class="nav-item logout-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+          Sair
+        </a>
       </div>
     </nav>
 
@@ -327,8 +321,8 @@
     <main class="main-container">
       <div class="header-dashboard">
         <div>
-          <h1 class="greeting-title">Olá, Dezzinha! ✨</h1>
-          <p class="greeting-date">Quarta-feira, 22 Julho</p>
+          <h1 class="greeting-title" id="greetingTitle">Carregando... ✨</h1>
+          <p class="greeting-date" id="greetingDate">--</p>
         </div>
         
         <div class="header-actions">
@@ -419,6 +413,62 @@
   </button>
 
   <script>
+    // 1. CONEXÃO COM O SUPABASE
+    const SUPABASE_URL = "https://yhecaaajbgetcnfdcqxj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 2. GUARDA DE ROTA E CARREGAMENTO DOS DADOS DO USUÁRIO
+    async function checarAutenticacao() {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+      // TRAVA DE SEGURANÇA: Se não estiver logado, manda pro login
+      if (error || !session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Atualiza a Data Dinâmica na tela
+      atualizarDataAtual();
+
+      // Busca perfil no banco
+      const { data: perfil } = await supabaseClient
+        .from('perfis')
+        .select('nome, email')
+        .eq('id', session.user.id)
+        .single();
+
+      // Define a saudação usando o Nome do perfil ou a primeira parte do E-mail
+      const greetingTitle = document.getElementById('greetingTitle');
+      if (perfil) {
+        const nomeExibicao = perfil.nome || perfil.email.split('@')[0];
+        greetingTitle.innerText = `Olá, ${nomeExibicao}! ✨`;
+      } else {
+        greetingTitle.innerText = `Olá! ✨`;
+      }
+    }
+
+    // Formata a data de hoje (ex: "Quinta-feira, 23 Julho")
+    function atualizarDataAtual() {
+      const hoje = new Date();
+      const opcoes = { weekday: 'long', day: 'numeric', month: 'long' };
+      let dataFormatada = hoje.toLocaleDateString('pt-BR', opcoes);
+      dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+      
+      const greetingDate = document.getElementById('greetingDate');
+      if (greetingDate) greetingDate.innerText = dataFormatada;
+    }
+
+    // 3. FUNÇÃO DE LOGOUT
+    async function fazerLogout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    }
+
+    // Executa a validação imediatamente ao carregar a página
+    checarAutenticacao();
+
+    // 4. FUNÇÕES INTERATIVAS DA TELA
     function toggleAgenda() {
       const toggle = document.getElementById('agendaToggle');
       const text = document.getElementById('statusText');
@@ -441,7 +491,7 @@
     }
 
     function openWA(nomeCliente, horario, servico) {
-      const msg = `Olá ${nomeCliente}, passando pra confirmar seu horário hoje às ${horario}, ${servico}, no Studio Dezzinha! ✨`;
+      const msg = `Olá ${nomeCliente}, passando pra confirmar seu horário hoje às ${horario}, ${servico}! ✨`;
       const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
