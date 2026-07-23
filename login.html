@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acessar - AgendAi</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+  <!-- SDK OFICIAL DO SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -17,6 +21,8 @@
       --border-color: #E2E8F0;
       --primary: #4F46E5;
       --primary-hover: #4338CA;
+      --error-color: #EF4444;
+      --success-color: #22C55E;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -153,6 +159,30 @@
     .btn-submit:hover {
       background: var(--primary-hover);
     }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* MENSAGENS DE ALERTA */
+    .msg-feedback {
+      font-size: 13px;
+      margin-top: 14px;
+      display: none;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .msg-feedback.error {
+      display: block;
+      background: #FEE2E2;
+      color: var(--error-color);
+    }
+    .msg-feedback.success {
+      display: block;
+      background: #DCFCE7;
+      color: var(--success-color);
+    }
 
     /* RODAPÉ DO LOGIN */
     .login-footer {
@@ -178,7 +208,7 @@
     <p class="subtitle" id="form-subtitle">Acesse sua conta ou inicie seu teste grátis</p>
 
     <!-- Botão do Google -->
-    <button class="btn-google">
+    <button class="btn-google" type="button" onclick="loginGoogle()">
       <svg viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -192,8 +222,8 @@
       <span>ou use seu e-mail</span>
     </div>
 
-    <!-- Formulário Dinâmico -->
-    <form action="home.html" method="GET">
+    <!-- Formulário de Autenticação -->
+    <form id="auth-form" onsubmit="handleAuth(event)">
       <div class="input-group">
         <label for="email">E-mail</label>
         <input type="email" id="email" placeholder="seu@email.com" required>
@@ -202,10 +232,11 @@
       <div class="input-group">
         <label for="password">Senha</label>
         <input type="password" id="password" placeholder="••••••••" required>
-        <a href="#" class="forgot-password" id="forgot-link">Esqueceu a senha?</a>
+        <a href="#" class="forgot-password" id="forgot-link" onclick="resetPassword(event)">Esqueceu a senha?</a>
       </div>
 
       <button type="submit" class="btn-submit" id="btn-submit-text">Entrar</button>
+      <div id="msg-box" class="msg-feedback"></div>
     </form>
 
     <!-- Rodapé que alterna o modo -->
@@ -215,14 +246,21 @@
   </div>
 
   <script>
+    // 1. INICIALIZAÇÃO DO SUPABASE
+    const SUPABASE_URL = "https://yhecaaajbgetcnfdcqxj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let isLoginMode = true;
 
+    // Alterna entre modo Login e Cadastro
     function toggleMode() {
       isLoginMode = !isLoginMode;
       const subtitle = document.getElementById('form-subtitle');
       const submitBtn = document.getElementById('btn-submit-text');
       const forgotLink = document.getElementById('forgot-link');
       const footerText = document.getElementById('footer-text');
+      hideMsg();
 
       if (isLoginMode) {
         subtitle.innerText = "Acesse sua conta ou inicie seu teste grátis";
@@ -235,6 +273,107 @@
         forgotLink.style.display = "none";
         footerText.innerHTML = 'Já tem uma conta? <a onclick="toggleMode()">Fazer Login</a>';
       }
+    }
+
+    // Exibe mensagens de Erro ou Sucesso
+    function showMsg(text, type = 'error') {
+      const msgBox = document.getElementById('msg-box');
+      msgBox.innerText = text;
+      msgBox.className = `msg-feedback ${type}`;
+    }
+
+    function hideMsg() {
+      const msgBox = document.getElementById('msg-box');
+      msgBox.style.display = 'none';
+    }
+
+    // 2. LÓGICA PRINCIPAL DE AUTENTICAÇÃO (LOGIN / CADASTRO)
+    async function handleAuth(event) {
+      event.preventDefault();
+      hideMsg();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btn-submit-text');
+
+      btn.disabled = true;
+
+      try {
+        if (isLoginMode) {
+          // --- MODO LOGIN ---
+          btn.innerText = "Entrando...";
+          
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+          if (error) throw new Error("E-mail ou senha incorretos.");
+
+          // Valida a permissão no banco de dados (tabela perfis)
+          const { data: perfil, error: perfilErr } = await supabaseClient
+            .from('perfis')
+            .select('status')
+            .eq('id', data.user.id)
+            .single();
+
+          if (perfilErr || !perfil) {
+            throw new Error("Perfil não encontrado no sistema.");
+          }
+
+          if (perfil.status !== 'ativo') {
+            await supabaseClient.auth.signOut(); // Desloga por segurança
+            throw new Error("Sua conta está bloqueada ou pendente de liberação.");
+          }
+
+          // Se estiver ativo, vai para a Home
+          window.location.href = "home.html";
+
+        } else {
+          // --- MODO CADASTRO ---
+          btn.innerText = "Cadastrando...";
+
+          const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+          });
+
+          if (error) throw error;
+
+          showMsg("Conta criada com sucesso! Você já pode fazer login.", "success");
+          toggleMode(); // Volta para a tela de login
+        }
+      } catch (err) {
+        showMsg(err.message || "Ocorreu um erro. Tente novamente.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
+      }
+    }
+
+    // 3. RECUPERAÇÃO DE SENHA
+    async function resetPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        showMsg("Digite seu e-mail no campo acima primeiro.");
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+      if (error) {
+        showMsg("Erro ao enviar e-mail de recuperação.");
+      } else {
+        showMsg("E-mail de redefinição enviado! Verifique sua caixa de entrada.", "success");
+      }
+    }
+
+    // 4. LOGIN COM GOOGLE
+    async function loginGoogle() {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google'
+      });
+      if (error) showMsg("Erro ao conectar com o Google.");
     }
   </script>
 
