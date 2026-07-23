@@ -37,15 +37,18 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      width: 100vw;
-      overflow: hidden;
+      padding: 12px;
+      overflow-x: hidden;
     }
 
-    /* Container ocupa 100% da tela em celulares */
     .app-container {
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      max-width: 410px;
+      height: 780px; /* Altura fixa no container para manter menu fixo */
       background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
       position: relative;
@@ -408,6 +411,7 @@
       display: flex;
       justify-content: space-around;
       padding: 16px 10px 24px 10px;
+      border-radius: 0 0 28px 28px;
       z-index: 20;
     }
     .nav-item {
@@ -424,26 +428,26 @@
     .nav-item.active { color: var(--accent); }
     .nav-item svg { fill: currentColor; width: 22px; height: 22px; }
 
-    /* RESPONSIVIDADE PARA NOTEBOOK / DESKTOP (Menu Lateral e Tela Completa) */
+    /* RESPONSIVIDADE PARA NOTEBOOK / DESKTOP (Menu Lateral) */
     @media (min-width: 768px) {
       .app-container {
-        width: 100vw;
-        height: 100vh;
-        flex-direction: row; /* Coloca o menu à esquerda e o conteúdo ao lado preenchendo tudo */
-        border-radius: 0;
+        max-width: 900px;
+        height: 720px;
+        flex-direction: row; /* Coloca o menu ao lado do conteúdo */
+        border-radius: 28px;
       }
 
       .main-content {
         padding: 24px 0 0 0;
-        order: 1; 
+        order: 1; /* Conteúdo fica na primeira parte */
       }
 
-      /* Transforma o menu inferior em um menu lateral estilo app profissional */
+      /* Transforma o menu inferior em um menu lateral */
       .bottom-nav {
         position: relative;
         bottom: auto;
         left: auto;
-        width: 110px;
+        width: 100px;
         height: 100%;
         flex-direction: column;
         justify-content: flex-start;
@@ -452,7 +456,8 @@
         padding: 40px 10px;
         border-top: none;
         border-right: 1px solid var(--card-border);
-        order: 0; 
+        border-radius: 28px 0 0 28px;
+        order: 0; /* Menu vai para a esquerda */
       }
 
       .nav-item {
@@ -465,7 +470,7 @@
       }
 
       .agenda-list {
-        padding-bottom: 30px; 
+        padding-bottom: 30px; /* Ajusta o padding para telas maiores */
       }
 
       .fab-add {
