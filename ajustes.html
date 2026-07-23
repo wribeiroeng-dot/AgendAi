@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- SUPABASE CLIENT CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg: #0b132b;
@@ -439,17 +442,17 @@
         <div class="settings-section-title">Negócio & Perfil</div>
         <div class="settings-card">
           <div class="settings-item" onclick="openProfileModal()">
-					  <div class="settings-item-left">
-					    <div class="settings-icon">
-					      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
-					    </div>
-					    <div>
-					      <div class="settings-label">Perfil do Usuário</div>
-					      <div class="settings-subtext" id="currentUserDisplay">Carregando nome...</div>
-					    </div>
-					  </div>
-					  <div class="settings-value">Editar &gt;</div>
-					</div>
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Perfil do Usuário</div>
+                <div class="settings-subtext" id="currentUserDisplay">Carregando nome...</div>
+              </div>
+            </div>
+            <div class="settings-value">Editar &gt;</div>
+          </div>
 
           <div class="settings-item" onclick="showToast('Configurando horários...')">
             <div class="settings-item-left">
@@ -587,22 +590,24 @@
         <div id="categoryManageList"></div>
       </div>
     </div>
-<!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
-<div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
-  <div class="bottom-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Editar Nome do Perfil</div>
-    
-    <form id="profileForm" onsubmit="handleProfileSubmit(event)">
-      <div class="form-group">
-        <label class="form-label">Nome de Exibição</label>
-        <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
-      </div>
 
-      <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
-    </form>
-  </div>
-</div>
+    <!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
+    <div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Editar Nome do Perfil</div>
+        
+        <form id="profileForm" onsubmit="handleProfileSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Nome de Exibição</label>
+            <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+
     <!-- FAB BUTTON (Aparece apenas na aba Serviços) -->
     <button class="fab-add" id="fabAddService" onclick="openCreateServiceModal()">
       <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
@@ -630,6 +635,12 @@
   </div>
 
   <script>
+    // CONFIGURAÇÃO DO SUPABASE
+    // (Substitua pelos dados do seu projeto Supabase se necessário)
+    const SUPABASE_URL = 'SUA_URL_DO_SUPABASE';
+    const SUPABASE_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let categories = [
       { id: 'cabelo', name: 'Cabelo' },
       { id: 'quimica', name: 'Química' },
@@ -645,6 +656,68 @@
     let currentFilter = 'all';
     let formHours = 0;
     let formMinutes = 30;
+
+    // --- FUNÇÕES DE INTEGRAÇÃO COM PERFIL / SUPABASE ---
+
+    // 1. Busca o nome do usuário assim que a tela abre
+    async function carregarPerfilUsuario() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session && session.user) {
+          const nomeAtual = session.user.user_metadata?.display_name || 'Nome não definido';
+          document.getElementById('currentUserDisplay').innerText = nomeAtual;
+        } else {
+          document.getElementById('currentUserDisplay').innerText = 'Usuário Visitante';
+        }
+      } catch (err) {
+        console.error('Erro ao buscar usuário:', err);
+        document.getElementById('currentUserDisplay').innerText = 'Meu Perfil';
+      }
+    }
+
+    // 2. Preenche a caixa de texto e exibe o modal de perfil
+    async function openProfileModal() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session && session.user) {
+          const nomeAtual = session.user.user_metadata?.display_name || '';
+          document.getElementById('userNameInput').value = nomeAtual;
+        }
+      } catch (err) {
+        console.error('Erro ao abrir dados do perfil:', err);
+      }
+      document.getElementById('profileModal').classList.add('active');
+    }
+
+    // 3. Salva a alteração do nome no Supabase
+    async function handleProfileSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveProfile');
+      const novoNome = document.getElementById('userNameInput').value.trim();
+
+      if (!novoNome) return;
+
+      btn.innerText = 'Salvando...';
+
+      const { data, error } = await supabaseClient.auth.updateUser({
+        data: { display_name: novoNome }
+      });
+
+      btn.innerText = 'Salvar Alterações';
+
+      if (error) {
+        console.error("Erro ao atualizar perfil:", error);
+        showToast("Erro ao atualizar o nome!");
+        return;
+      }
+
+      // Atualiza o texto na interface sem recarregar a página
+      document.getElementById('currentUserDisplay').innerText = novoNome;
+      closeModal('profileModal');
+      showToast("Nome atualizado com sucesso!");
+    }
+
+    // --- NAVEGAÇÃO E REGRAS DE INTERFACE ---
 
     // Alternar Abas Principais
     function switchTab(tabId, btnElement) {
@@ -917,9 +990,10 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // Inicialização
+    // Inicialização ao carregar a página
     renderCategories();
     renderServices();
+    carregarPerfilUsuario();
   </script>
 </body>
 </html>
