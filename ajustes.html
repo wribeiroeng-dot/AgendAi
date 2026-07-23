@@ -67,130 +67,6 @@
       flex-shrink: 0;
     }
     .page-title { font-size: 20px; font-weight: 800; }
-    
-    .header-actions-top { display: flex; gap: 8px; }
-
-    .btn-icon-top {
-      background: var(--input-bg);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--accent);
-      border-radius: 10px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ABAS DE CATEGORIAS (SERVIÇOS) */
-    .category-tabs {
-      display: flex;
-      gap: 8px;
-      padding: 0 20px 16px 20px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      flex-shrink: 0;
-      align-items: center;
-    }
-    .category-tabs::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
-      padding: 6px 14px;
-      background: var(--input-bg);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: rgba(212, 175, 55, 0.15);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    /* LISTA DE SERVIÇOS */
-    .services-list {
-      padding: 16px 20px 100px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
-      flex: 1;
-      scrollbar-width: none;
-    }
-    .services-list::-webkit-scrollbar { display: none; }
-
-    .service-card {
-      background: var(--input-bg);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: border-color 0.2s;
-    }
-    .service-card:hover { border-color: var(--card-border); }
-
-    .service-info-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .service-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
-    .service-desc { font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
-
-    .service-price {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--accent);
-      white-space: nowrap;
-    }
-
-    .service-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px dashed rgba(255,255,255,0.08);
-      padding-top: 10px;
-    }
-
-    .service-duration {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-    .service-duration svg { fill: currentColor; width: 14px; height: 14px; }
-
-    .service-actions { display: flex; gap: 8px; }
-
-    .icon-action-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: background 0.2s, color 0.2s;
-    }
-    .icon-action-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
-    .icon-action-btn.delete:hover { background: rgba(239, 68, 68, 0.15); color: var(--status-canceled); border-color: rgba(239, 68, 68, 0.3); }
-    .icon-action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
     /* ABA DE AJUSTES ESTILO LISTA CONFIG */
     .settings-body {
@@ -300,58 +176,18 @@
       display: block; font-size: 11px; font-weight: 700;
       color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;
     }
-    .form-input, .form-select {
+    .form-input {
       width: 100%; background: var(--input-bg);
       border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
       padding: 12px; color: var(--text-main); font-size: 14px; outline: none;
     }
-    .form-input:focus, .form-select:focus { border-color: var(--accent); }
-
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
-
-    /* SELETOR DE TEMPO TIPO RELÓGIO */
-    .time-picker-container {
-      display: flex;
-      gap: 12px;
-      background: var(--input-bg);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 10px;
-      align-items: center;
-      justify-content: center;
-    }
-    .time-field { display: flex; flex-direction: column; align-items: center; flex: 1; }
-    .time-field label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; }
-    .time-controls { display: flex; align-items: center; gap: 8px; }
-    .time-btn {
-      background: rgba(255,255,255,0.08); border: none; color: var(--accent);
-      width: 28px; height: 28px; border-radius: 8px; font-weight: bold; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .time-btn:active { background: rgba(212,175,55,0.3); }
-    .time-value { font-size: 16px; font-weight: 800; color: var(--text-main); width: 30px; text-align: center; }
-    .time-separator { font-size: 18px; font-weight: bold; color: var(--accent); margin-top: 14px; }
+    .form-input:focus { border-color: var(--accent); }
 
     .btn-submit {
       width: 100%; background: var(--accent); color: #0b132b;
       border: none; border-radius: 12px; padding: 14px;
       font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
     }
-
-    /* LISTA DE CATEGORIAS NO MODAL */
-    .cat-manage-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--input-bg);
-      padding: 10px 14px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .cat-manage-name { font-size: 13px; font-weight: 600; }
-    .cat-actions { display: flex; gap: 6px; }
 
     /* TOAST */
     .toast {
@@ -364,16 +200,7 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* FAB & NAV */
-    .fab-add {
-      position: absolute; bottom: 90px; right: 20px; width: 56px; height: 56px;
-      background: var(--accent); border-radius: 50%; border: none;
-      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #0b132b; z-index: 10;
-    }
-    .fab-add:active { transform: scale(0.9); }
-
+    /* NAV */
     .bottom-nav {
       position: absolute; bottom: 0; left: 0; width: 100%;
       background: rgba(11, 19, 43, 0.95); backdrop-filter: blur(10px);
@@ -415,21 +242,8 @@
       </div>
     </div>
 
-    <!-- CONTEÚDO: SERVIÇOS -->
-    <div id="tab-servicos" class="tab-content active">
-      <div class="page-header">
-        <h1 class="page-title">Serviços</h1>
-        <div class="header-actions-top">
-          <button class="btn-icon-top" onclick="openCategoryManagerModal()">⚙️ Categorias</button>
-        </div>
-      </div>
-
-      <div class="category-tabs" id="categoryTabsContainer"></div>
-      <div class="services-list" id="servicesList"></div>
-    </div>
-
-    <!-- CONTEÚDO: AJUSTES -->
-    <div id="tab-ajustes" class="tab-content">
+    <!-- CONTEÚDO: AJUSTES (Ativo por padrão nesta tela) -->
+    <div id="tab-ajustes" class="tab-content active">
       <div class="page-header">
         <h1 class="page-title">Ajustes</h1>
       </div>
@@ -439,17 +253,17 @@
         <div class="settings-section-title">Negócio & Perfil</div>
         <div class="settings-card">
           <div class="settings-item" onclick="openProfileModal()">
-					  <div class="settings-item-left">
-					    <div class="settings-icon">
-					      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
-					    </div>
-					    <div>
-					      <div class="settings-label">Perfil do Usuário</div>
-					      <div class="settings-subtext" id="currentUserDisplay">Carregando nome...</div>
-					    </div>
-					  </div>
-					  <div class="settings-value">Editar &gt;</div>
-					</div>
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Perfil do Usuário</div>
+                <div class="settings-subtext" id="currentUserDisplay">AgendaAI-Adm</div>
+              </div>
+            </div>
+            <div class="settings-value">Editar &gt;</div>
+          </div>
 
           <div class="settings-item" onclick="showToast('Configurando horários...')">
             <div class="settings-item-left">
@@ -462,22 +276,6 @@
               </div>
             </div>
             <div class="settings-value">08:00 - 19:00</div>
-          </div>
-        </div>
-
-        <div class="settings-section-title">Gerenciamento</div>
-        <div class="settings-card">
-          <div class="settings-item" onclick="openCategoryManagerModal()">
-            <div class="settings-item-left">
-              <div class="settings-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
-              </div>
-              <div>
-                <div class="settings-label">Gerenciar Categorias</div>
-                <div class="settings-subtext">Adicionar, editar ou remover categorias</div>
-              </div>
-            </div>
-            <div class="settings-value">&gt;</div>
           </div>
         </div>
 
@@ -513,100 +311,22 @@
       </div>
     </div>
 
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE SERVIÇOS -->
-    <div class="modal-overlay" id="serviceModal" onclick="closeModal('serviceModal')">
+    <!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
+    <div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
       <div class="bottom-sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title" id="modalTitle">Novo Serviço</div>
+        <div class="sheet-title">Editar Nome do Perfil</div>
         
-        <form id="serviceForm" onsubmit="handleServiceSubmit(event)">
-          <input type="hidden" id="serviceId">
-          
+        <form id="profileForm" onsubmit="handleProfileSubmit(event)">
           <div class="form-group">
-            <label class="form-label">Nome do Serviço</label>
-            <input type="text" id="serviceNameInput" class="form-input" placeholder="Ex: Corte & Design VIP" required>
+            <label class="form-label">Nome de Exibição</label>
+            <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Descrição Breve</label>
-            <input type="text" id="serviceDescInput" class="form-input" placeholder="Ex: Corte personalizado" required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Preço (R$)</label>
-              <input type="text" id="servicePriceInput" class="form-input" placeholder="90,00" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Categoria</label>
-              <select id="serviceCategoryInput" class="form-select"></select>
-            </div>
-          </div>
-
-          <!-- SELETOR DE TEMPO (Incremento de 5 min) -->
-          <div class="form-group">
-            <label class="form-label">Duração Estimada</label>
-            <div class="time-picker-container">
-              <div class="time-field">
-                <label>HORAS</label>
-                <div class="time-controls">
-                  <button type="button" class="time-btn" onclick="adjustTime('hours', -1)">-</button>
-                  <span id="inputHours" class="time-value">0</span>
-                  <button type="button" class="time-btn" onclick="adjustTime('hours', 1)">+</button>
-                </div>
-              </div>
-              <div class="time-separator">:</div>
-              <div class="time-field">
-                <label>MINUTOS</label>
-                <div class="time-controls">
-                  <button type="button" class="time-btn" onclick="adjustTime('minutes', -5)">-</button>
-                  <span id="inputMinutes" class="time-value">30</span>
-                  <button type="button" class="time-btn" onclick="adjustTime('minutes', 5)">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" id="btnSaveText">Salvar Serviço</button>
+          <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
         </form>
       </div>
     </div>
-
-    <!-- MODAL DE GERENCIAMENTO DE CATEGORIAS -->
-    <div class="modal-overlay" id="categoryModal" onclick="closeModal('categoryModal')">
-      <div class="bottom-sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title" id="catModalTitle">Gerenciar Categorias</div>
-        
-        <form id="categoryForm" onsubmit="handleCategorySubmit(event)" style="display: flex; gap: 8px; margin-bottom: 16px;">
-          <input type="hidden" id="editCatId">
-          <input type="text" id="newCategoryInput" class="form-input" placeholder="Nova Categoria..." required style="flex: 1;">
-          <button type="submit" id="catBtnText" class="btn-submit" style="width: auto; margin-top: 0; padding: 0 16px;">Adicionar</button>
-        </form>
-
-        <div id="categoryManageList"></div>
-      </div>
-    </div>
-<!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
-<div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
-  <div class="bottom-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Editar Nome do Perfil</div>
-    
-    <form id="profileForm" onsubmit="handleProfileSubmit(event)">
-      <div class="form-group">
-        <label class="form-label">Nome de Exibição</label>
-        <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
-      </div>
-
-      <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
-    </form>
-  </div>
-</div>
-    <!-- FAB BUTTON (Aparece apenas na aba Serviços) -->
-    <button class="fab-add" id="fabAddService" onclick="openCreateServiceModal()">
-      <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-    </button>
 
     <!-- MENU INFERIOR -->
     <nav class="bottom-nav">
@@ -618,11 +338,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
         Agenda
       </button>
-      <button class="nav-item active" onclick="switchTab('servicos', this)">
+      <button class="nav-item" onclick="window.location.href='servicos.html'">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
         Serviços
       </button>
-      <button class="nav-item" onclick="switchTab('ajustes', this)">
+      <button class="nav-item active" onclick="switchTab('ajustes', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110-190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
         Ajustes
       </button>
@@ -630,22 +350,6 @@
   </div>
 
   <script>
-    let categories = [
-      { id: 'cabelo', name: 'Cabelo' },
-      { id: 'quimica', name: 'Química' },
-      { id: 'estetica', name: 'Estética' }
-    ];
-
-    let services = [
-      { id: 1, name: 'Corte & Design VIP', desc: 'Corte personalizado com lavagem.', price: 'R$ 90,00', hours: 0, minutes: 45, category: 'cabelo' },
-      { id: 2, name: 'Coloração Premium', desc: 'Aplicação de tinta profissional.', price: 'R$ 180,00', hours: 1, minutes: 30, category: 'quimica' },
-      { id: 3, name: 'Escova & Modelagem', desc: 'Escova lisa ou modelada.', price: 'R$ 60,00', hours: 0, minutes: 30, category: 'cabelo' }
-    ];
-
-    let currentFilter = 'all';
-    let formHours = 0;
-    let formMinutes = 30;
-
     // Alternar Abas Principais
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -653,257 +357,21 @@
 
       document.getElementById('tab-' + tabId).classList.add('active');
       btnElement.classList.add('active');
-
-      // Controla visibilidade do botão flutuante (FAB)
-      const fab = document.getElementById('fabAddService');
-      if (tabId === 'servicos') {
-        fab.style.display = 'flex';
-      } else {
-        fab.style.display = 'none';
-      }
     }
 
-    function renderCategories() {
-      const tabsContainer = document.getElementById('categoryTabsContainer');
-      const selectContainer = document.getElementById('serviceCategoryInput');
-      
-      tabsContainer.innerHTML = `<button class="tab-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="filterCategory('all', this)">Todos</button>`;
-      selectContainer.innerHTML = '';
-
-      categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${currentFilter === cat.id ? 'active' : ''}`;
-        btn.innerText = cat.name;
-        btn.onclick = () => filterCategory(cat.id, btn);
-        tabsContainer.appendChild(btn);
-
-        const opt = document.createElement('option');
-        opt.value = cat.id;
-        opt.innerText = cat.name;
-        selectContainer.appendChild(opt);
-      });
+    // Modal de Perfil
+    function openProfileModal() {
+      document.getElementById('profileModal').classList.add('active');
     }
 
-    function renderServices() {
-      const container = document.getElementById('servicesList');
-      container.innerHTML = '';
-
-      const filtered = currentFilter === 'all' 
-        ? services 
-        : services.filter(s => s.category === currentFilter);
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; margin-top:40px;">Nenhum serviço nesta categoria.</div>`;
-        return;
-      }
-
-      filtered.forEach(service => {
-        let durationText = '';
-        if (service.hours > 0) durationText += `${service.hours}h `;
-        if (service.minutes > 0 || service.hours === 0) durationText += `${service.minutes} min`;
-
-        const card = document.createElement('div');
-        card.className = 'service-card';
-        card.innerHTML = `
-          <div class="service-info-top">
-            <div>
-              <div class="service-name">${service.name}</div>
-              <div class="service-desc">${service.desc}</div>
-            </div>
-            <div class="service-price">${service.price}</div>
-          </div>
-          <div class="service-meta">
-            <div class="service-duration">
-              <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 -960 960 960" width="14"><path d="m612-292-56-56 104-104H440v-80h220L556-636l56-56 200 200-200 200ZM400-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-800q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T400-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-              ${durationText}
-            </div>
-            <div class="service-actions">
-              <button class="icon-action-btn" onclick="openEditServiceModal(${service.id})">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm56-360v-80h394l-80 80H256Zm0-160v-80h558l-80 80H256Zm568-156-56-56 56 56Zm-412 316v-80h94l-94 94v-14Z"/></svg>
-              </button>
-              <button class="icon-action-btn delete" onclick="deleteService(${service.id})">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-              </button>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // Seletor de Tempo (Incremento de 5 min)
-    function adjustTime(type, amount) {
-      if (type === 'hours') {
-        formHours = Math.max(0, formHours + amount);
-      } else if (type === 'minutes') {
-        formMinutes += amount;
-        if (formMinutes >= 60) { formMinutes = 0; formHours++; }
-        if (formMinutes < 0) {
-          if (formHours > 0) { formHours--; formMinutes = 55; }
-          else { formMinutes = 0; }
-        }
-      }
-      updateTimeDisplay();
-    }
-
-    function updateTimeDisplay() {
-      document.getElementById('inputHours').innerText = formHours;
-      document.getElementById('inputMinutes').innerText = String(formMinutes).padStart(2, '0');
-    }
-
-    function filterCategory(catId, btnElement) {
-      currentFilter = catId;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
-      renderServices();
-    }
-
-    function openCreateServiceModal() {
-      document.getElementById('modalTitle').innerText = 'Novo Serviço';
-      document.getElementById('btnSaveText').innerText = 'Cadastrar Serviço';
-      document.getElementById('serviceId').value = '';
-      document.getElementById('serviceNameInput').value = '';
-      document.getElementById('serviceDescInput').value = '';
-      document.getElementById('servicePriceInput').value = '';
-      formHours = 0;
-      formMinutes = 30;
-      updateTimeDisplay();
-      document.getElementById('serviceModal').classList.add('active');
-    }
-
-    function openEditServiceModal(id) {
-      const s = services.find(item => item.id === id);
-      if (!s) return;
-      document.getElementById('modalTitle').innerText = 'Editar Serviço';
-      document.getElementById('btnSaveText').innerText = 'Salvar Alterações';
-      document.getElementById('serviceId').value = s.id;
-      document.getElementById('serviceNameInput').value = s.name;
-      document.getElementById('serviceDescInput').value = s.desc;
-      document.getElementById('servicePriceInput').value = s.price;
-      document.getElementById('serviceCategoryInput').value = s.category;
-      formHours = s.hours;
-      formMinutes = s.minutes;
-      updateTimeDisplay();
-      document.getElementById('serviceModal').classList.add('active');
-    }
-
-    function handleServiceSubmit(e) {
+    function handleProfileSubmit(e) {
       e.preventDefault();
-      const id = document.getElementById('serviceId').value;
-      const name = document.getElementById('serviceNameInput').value;
-      const desc = document.getElementById('serviceDescInput').value;
-      let price = document.getElementById('servicePriceInput').value;
-      const category = document.getElementById('serviceCategoryInput').value;
-
-      if (!price.toLowerCase().includes('r$')) price = 'R$ ' + price;
-
-      if (id) {
-        const idx = services.findIndex(item => item.id == id);
-        if (idx !== -1) {
-          services[idx] = { id: Number(id), name, desc, price, hours: formHours, minutes: formMinutes, category };
-          showToast('Serviço atualizado!');
-        }
-      } else {
-        const newId = services.length > 0 ? Math.max(...services.map(i => i.id)) + 1 : 1;
-        services.push({ id: newId, name, desc, price, hours: formHours, minutes: formMinutes, category });
-        showToast('Novo serviço criado!');
+      const newName = document.getElementById('userNameInput').value.trim();
+      if (newName) {
+        document.getElementById('currentUserDisplay').innerText = newName;
+        showToast('Perfil atualizado com sucesso!');
       }
-
-      closeModal('serviceModal');
-      renderServices();
-    }
-
-    function deleteService(id) {
-      if (confirm('Deseja excluir este serviço?')) {
-        services = services.filter(s => s.id !== id);
-        renderServices();
-        showToast('Serviço excluído.');
-      }
-    }
-
-    // Modal Gerenciamento de Categorias
-    function openCategoryManagerModal() {
-      resetCategoryForm();
-      renderCategoryManageList();
-      document.getElementById('categoryModal').classList.add('active');
-    }
-
-    function resetCategoryForm() {
-      document.getElementById('editCatId').value = '';
-      document.getElementById('newCategoryInput').value = '';
-      document.getElementById('catBtnText').innerText = 'Adicionar';
-    }
-
-    function renderCategoryManageList() {
-      const list = document.getElementById('categoryManageList');
-      list.innerHTML = '';
-      categories.forEach(cat => {
-        const div = document.createElement('div');
-        div.className = 'cat-manage-item';
-        div.innerHTML = `
-          <span class="cat-manage-name">${cat.name}</span>
-          <div class="cat-actions">
-            <button class="icon-action-btn" onclick="editCategory('${cat.id}', '${cat.name}')" style="width:28px;height:28px;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm56-360v-80h394l-80 80H256Zm0-160v-80h558l-80 80H256Zm568-156-56-56 56 56Zm-412 316v-80h94l-94 94v-14Z"/></svg>
-            </button>
-            <button class="icon-action-btn delete" onclick="deleteCategory('${cat.id}')" style="width:28px;height:28px;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-            </button>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    function editCategory(id, name) {
-      document.getElementById('editCatId').value = id;
-      document.getElementById('newCategoryInput').value = name;
-      document.getElementById('catBtnText').innerText = 'Salvar';
-    }
-
-    function handleCategorySubmit(e) {
-      e.preventDefault();
-      const editId = document.getElementById('editCatId').value;
-      const input = document.getElementById('newCategoryInput');
-      const name = input.value.trim();
-      if (!name) return;
-
-      if (editId) {
-        const cat = categories.find(c => c.id === editId);
-        if (cat) {
-          cat.name = name;
-          showToast('Categoria atualizada!');
-        }
-        resetCategoryForm();
-      } else {
-        const id = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-        if (categories.some(c => c.id === id)) {
-          alert('Esta categoria já existe!');
-          return;
-        }
-        categories.push({ id, name });
-        input.value = '';
-        showToast('Categoria criada!');
-      }
-
-      renderCategories();
-      renderCategoryManageList();
-      renderServices();
-    }
-
-    function deleteCategory(id) {
-      if (categories.length <= 1) {
-        alert('Você precisa ter pelo menos uma categoria.');
-        return;
-      }
-      if (confirm('Ao excluir a categoria, os serviços vinculados ficarão sem categoria. Deseja prosseguir?')) {
-        categories = categories.filter(c => c.id !== id);
-        if (currentFilter === id) currentFilter = 'all';
-        renderCategories();
-        renderCategoryManageList();
-        renderServices();
-        showToast('Categoria excluída.');
-      }
+      closeModal('profileModal');
     }
 
     function closeModal(modalId) {
@@ -916,10 +384,6 @@
       toast.classList.add('show');
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
-
-    // Inicialização
-    renderCategories();
-    renderServices();
   </script>
 </body>
 </html>
