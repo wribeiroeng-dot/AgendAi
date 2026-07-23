@@ -222,7 +222,7 @@
   <div class="app-container">
     <div id="toast" class="toast">Ação realizada com sucesso!</div>
     
-    <!-- CONTEÚDO: INÍCIO (Placeholder) -->
+    <!-- CONTEÚDO: INÍCIO -->
     <div id="tab-inicio" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Início</h1>
@@ -232,7 +232,7 @@
       </div>
     </div>
 
-    <!-- CONTEÚDO: AGENDA (Placeholder) -->
+    <!-- CONTEÚDO: AGENDA -->
     <div id="tab-agenda" class="tab-content">
       <div class="page-header">
         <h1 class="page-title">Agenda</h1>
@@ -242,7 +242,7 @@
       </div>
     </div>
 
-    <!-- CONTEÚDO: AJUSTES (Ativo por padrão nesta tela) -->
+    <!-- CONTEÚDO: AJUSTES (Ativo por padrão) -->
     <div id="tab-ajustes" class="tab-content active">
       <div class="page-header">
         <h1 class="page-title">Ajustes</h1>
@@ -328,7 +328,7 @@
       </div>
     </div>
 
-    <!-- MENU INFERIOR -->
+    <!-- MENU INFERIOR (Navegação atualizada para transição de abas e páginas) -->
     <nav class="bottom-nav">
       <button class="nav-item" onclick="switchTab('inicio', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
@@ -350,7 +350,7 @@
   </div>
 
   <script>
-    // Alternar Abas Principais
+    // Função para alternar entre as abas internas (Início, Agenda, Ajustes)
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
