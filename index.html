@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgendAi - Automatize sua rotina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-light: #F8FAFC;
+      --text-dark: #0F172A;
+      --text-gray: #475569;
+      --primary: #4F46E5; /* Azul Indigo (Confiança) */
+      --action: #10B981; /* Verde Esmeralda (Ação/Crescimento) */
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* CABEÇALHO (Onde fica o Login) */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5%;
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+    .btn-login {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 16px;
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .btn-login:hover { background: var(--primary); color: #FFF; }
+
+    /* SEÇÃO PRINCIPAL (Hero) */
+    .hero {
+      text-align: center;
+      padding: 80px 5% 60px 5%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .tagline {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--action);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+    .hero h1 span { color: var(--primary); }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-gray);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .btn-cta {
+      display: inline-block;
+      background: var(--action);
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 18px 36px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+    }
+    .garantia {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-gray);
+    }
+
+    /* SEÇÃO DE BENEFÍCIOS (Dores) */
+    .benefits {
+      background: #FFFFFF;
+      padding: 60px 5%;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .benefit-card {
+      padding: 30px;
+      background: var(--bg-light);
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .b-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+    .benefit-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+    .benefit-card p { font-size: 14px; color: var(--text-gray); }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+      .btn-cta { font-size: 16px; padding: 16px 24px; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABEÇALHO -->
+  <header>
+    <div class="logo">AgendAi.</div>
+    <!-- Esse botão levará para o arquivo login.html no futuro -->
+    <a href="#" class="btn-login">Entrar</a>
+  </header>
+
+  <!-- SEÇÃO PRINCIPAL -->
+  <section class="hero">
+    <div class="tagline">Disponível 24/7</div>
+    <h1>Pare de perder clientes porque estava ocupado demais <span>para responder.</span></h1>
+    <p>Seu cliente agenda sozinho a qualquer hora. Você elimina os buracos na agenda, acaba com os faltosos e ganha tempo para focar no que realmente importa: o seu trabalho.</p>
+    
+    <!-- Esse botão levará para o cadastro.html -->
+    <a href="#" class="btn-cta">Começar meus 7 Dias Grátis</a>
+    <span class="garantia">Sem necessidade de cartão de crédito.</span>
+  </section>
+
+  <!-- SEÇÃO DE PROBLEMA / SOLUÇÃO -->
+  <section class="benefits">
+    <div class="benefits-grid">
+      
+      <div class="benefit-card">
+        <div class="b-icon">⏰</div>
+        <h3>Fim das mensagens de madrugada</h3>
+        <p>Acorde com novos agendamentos feitos enquanto você dormia. O sistema funciona para você 24 horas por dia.</p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="b-icon">📅</div>
+        <h3>Fim dos choques de horário</h3>
+        <p>Chega de marcar duas pessoas para o mesmo momento por engano. O sistema bloqueia automaticamente os horários já ocupados, mantendo sua agenda organizada sem esforço.</p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="b-icon">💼</div>
+        <h3>Postura Profissional</h3>
+        <p>Deixe de ser o profissional do "caderninho". Entregue um link personalizado e mostre autoridade no mercado.</p>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>
