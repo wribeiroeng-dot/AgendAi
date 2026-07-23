@@ -20,7 +20,9 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --input-bg: #0f172a;
+      --sidebar-width: 260px;
       --status-canceled: #ef4444;
+      --status-offline: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -29,28 +31,73 @@
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
-      justify-content: center;
       min-height: 100vh;
-      padding: 12px;
+      width: 100vw;
       overflow-x: hidden;
     }
 
-    .app-container {
+    /* LAYOUT WRAPPER (Igual Home e Agenda) */
+    .layout-wrapper {
+      display: flex;
       width: 100%;
-      max-width: 410px;
-      height: 780px;
+      min-height: 100vh;
+    }
+
+    /* NAVEGAÇÃO / MENU LATERAL (Padronizado) */
+    .app-navigation {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 28px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      width: 100%;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: var(--accent);
+      background: rgba(212, 175, 55, 0.1);
+    }
+    .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ÁREA DE CONTEÚDO PRINCIPAL */
+    .main-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
+      height: 100vh;
     }
 
     .main-content {
-      padding: 24px 0 0 0;
+      padding: 0;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -59,14 +106,14 @@
 
     /* CABEÇALHO */
     .page-header {
-      padding: 0 20px;
+      padding: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       flex-shrink: 0;
     }
-    .page-title { font-size: 20px; font-weight: 800; }
+    .page-title { font-size: 24px; font-weight: 800; }
     
     .header-actions-top {
       display: flex;
@@ -77,21 +124,23 @@
       background: var(--input-bg);
       border: 1px solid rgba(255,255,255,0.08);
       color: var(--accent);
-      border-radius: 10px;
-      padding: 6px 10px;
-      font-size: 11px;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      transition: background 0.2s;
     }
+    .btn-icon-top:hover { background: rgba(212, 175, 55, 0.1); }
 
     /* ABAS DE CATEGORIAS */
     .category-tabs {
       display: flex;
       gap: 8px;
-      padding: 0 20px 16px 20px;
+      padding: 0 0 20px 0;
       overflow-x: auto;
       scrollbar-width: none;
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -101,12 +150,12 @@
     .category-tabs::-webkit-scrollbar { display: none; }
 
     .tab-btn {
-      padding: 6px 14px;
+      padding: 8px 16px;
       background: var(--input-bg);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
       color: var(--text-muted);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       white-space: nowrap;
       cursor: pointer;
@@ -120,10 +169,10 @@
 
     /* LISTA DE SERVIÇOS */
     .services-list {
-      padding: 16px 20px 100px 20px;
+      padding: 20px 0 100px 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       overflow-y: auto;
       flex: 1;
       scrollbar-width: none;
@@ -301,7 +350,9 @@
       width: 100%; background: var(--accent); color: #0b132b;
       border: none; border-radius: 12px; padding: 14px;
       font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
+      transition: opacity 0.2s;
     }
+    .btn-submit:active { opacity: 0.85; }
 
     /* LISTA DE CATEGORIAS NO MODAL DE GERENCIAMENTO */
     .cat-manage-item {
@@ -328,159 +379,187 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* FAB & NAV */
+    /* FAB BUTTON */
     .fab-add {
-      position: absolute; bottom: 90px; right: 20px; width: 56px; height: 56px;
+      position: absolute; bottom: 30px; right: 30px; width: 56px; height: 56px;
       background: var(--accent); border-radius: 50%; border: none;
       box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; color: #0b132b; z-index: 10;
+      transition: transform 0.2s;
     }
     .fab-add:active { transform: scale(0.9); }
 
-    .bottom-nav {
-      position: absolute; bottom: 0; left: 0; width: 100%;
-      background: rgba(11, 19, 43, 0.95); backdrop-filter: blur(10px);
-      border-top: 1px solid var(--card-border); display: flex;
-      justify-content: space-around; padding: 16px 10px 24px 10px;
-      border-radius: 0 0 28px 28px; z-index: 20;
+    /* RESPONSIVIDADE (Mobile vs Desktop igual Home e Agenda) */
+    @media (max-width: 1023px) {
+      .layout-wrapper { flex-direction: column; }
+      .main-container { padding-bottom: 90px; height: 100vh; }
+      .app-navigation {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 65px;
+        background: rgba(11, 19, 43, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--card-border);
+        border-right: none;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 10px;
+      }
+      .nav-links { justify-content: space-around; }
+      .nav-item {
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        padding: 6px 12px;
+      }
+      .fab-add { bottom: 85px; right: 20px; }
     }
-    .nav-item {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 600;
+
+    @media (min-width: 1024px) {
+      .app-navigation {
+        width: var(--sidebar-width);
+        flex-direction: column;
+        padding: 30px 20px;
+        position: sticky;
+        top: 0; height: 100vh;
+      }
+      .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
+      .nav-links { flex-direction: column; gap: 8px; height: 100%; }
+      .nav-item { font-size: 15px; padding: 14px 16px; }
+      .main-container { padding: 40px; }
     }
-    .nav-item.active { color: var(--accent); }
-    .nav-item svg { fill: currentColor; width: 22px; height: 22px; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <div id="toast" class="toast">Ação realizada com sucesso!</div>
-    
-    <div class="main-content">
+  <div class="layout-wrapper">
+
+    <!-- NAVEGAÇÃO LATERAL (Idêntica à Home e Agenda) -->
+    <nav class="app-navigation">
+      <div class="brand-logo">AgendAi.</div>
+      <div class="nav-links">
+        <a href="home.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+          Início
+        </a>
+        <a href="agenda.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
+          Agenda
+        </a>
+        <a href="servicos.html" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
+          Serviços
+        </a>
+        <a href="ajustes.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-container">
+      <div id="toast" class="toast">Ação realizada com sucesso!</div>
       
-      <!-- Cabeçalho -->
-      <div class="page-header">
-        <h1 class="page-title">Serviços</h1>
-        <div class="header-actions-top">
-          <button class="btn-icon-top" onclick="openCategoryManagerModal()">⚙️ Categorias</button>
+      <div class="main-content">
+        
+        <!-- Cabeçalho -->
+        <div class="page-header">
+          <h1 class="page-title">Serviços</h1>
+          <div class="header-actions-top">
+            <button class="btn-icon-top" onclick="openCategoryManagerModal()">⚙️ Categorias</button>
+          </div>
+        </div>
+
+        <!-- Abas de Categorias Dinâmicas -->
+        <div class="category-tabs" id="categoryTabsContainer"></div>
+
+        <!-- Lista de Serviços -->
+        <div class="services-list" id="servicesList"></div>
+      </div>
+
+      <!-- MODAL DE CADASTRO / EDIÇÃO DE SERVIÇOS -->
+      <div class="modal-overlay" id="serviceModal" onclick="closeModal('serviceModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title" id="modalTitle">Novo Serviço</div>
+          
+          <form id="serviceForm" onsubmit="handleServiceSubmit(event)">
+            <input type="hidden" id="serviceId">
+            
+            <div class="form-group">
+              <label class="form-label">Nome do Serviço</label>
+              <input type="text" id="serviceNameInput" class="form-input" placeholder="Ex: Corte & Design VIP" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição Breve</label>
+              <input type="text" id="serviceDescInput" class="form-input" placeholder="Ex: Corte personalizado" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Preço (R$)</label>
+                <input type="text" id="servicePriceInput" class="form-input" placeholder="90,00" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Categoria</label>
+                <select id="serviceCategoryInput" class="form-select"></select>
+              </div>
+            </div>
+
+            <!-- SELETOR DE TEMPO TIPO RELÓGIO -->
+            <div class="form-group">
+              <label class="form-label">Duração Estimada</label>
+              <div class="time-picker-container">
+                <div class="time-field">
+                  <label>HORAS</label>
+                  <div class="time-controls">
+                    <button type="button" class="time-btn" onclick="adjustTime('hours', -1)">-</button>
+                    <span id="inputHours" class="time-value">0</span>
+                    <button type="button" class="time-btn" onclick="adjustTime('hours', 1)">+</button>
+                  </div>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-field">
+                  <label>MINUTOS</label>
+                  <div class="time-controls">
+                    <button type="button" class="time-btn" onclick="adjustTime('minutes', -5)">-</button>
+                    <span id="inputMinutes" class="time-value">30</span>
+                    <button type="button" class="time-btn" onclick="adjustTime('minutes', 5)">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSaveText">Salvar Serviço</button>
+          </form>
         </div>
       </div>
 
-      <!-- Abas de Categorias Dinâmicas -->
-      <div class="category-tabs" id="categoryTabsContainer"></div>
-
-      <!-- Lista de Serviços -->
-      <div class="services-list" id="servicesList"></div>
-    </div>
-
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE SERVIÇOS -->
-    <div class="modal-overlay" id="serviceModal" onclick="closeModal('serviceModal')">
-      <div class="bottom-sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title" id="modalTitle">Novo Serviço</div>
-        
-        <form id="serviceForm" onsubmit="handleServiceSubmit(event)">
-          <input type="hidden" id="serviceId">
+      <!-- MODAL DE GERENCIAMENTO DE CATEGORIAS -->
+      <div class="modal-overlay" id="categoryModal" onclick="closeModal('categoryModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title" id="catModalTitle">Gerenciar Categorias</div>
           
-          <div class="form-group">
-            <label class="form-label">Nome do Serviço</label>
-            <input type="text" id="serviceNameInput" class="form-input" placeholder="Ex: Corte & Design VIP" required>
-          </div>
+          <form id="categoryForm" onsubmit="handleCategorySubmit(event)" style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <input type="hidden" id="editCatId">
+            <input type="text" id="newCategoryInput" class="form-input" placeholder="Nova Categoria..." required style="flex: 1;">
+            <button type="submit" id="catBtnText" class="btn-submit" style="width: auto; margin-top: 0; padding: 0 16px;">Adicionar</button>
+          </form>
 
-          <div class="form-group">
-            <label class="form-label">Descrição Breve</label>
-            <input type="text" id="serviceDescInput" class="form-input" placeholder="Ex: Corte personalizado" required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Preço (R$)</label>
-              <input type="text" id="servicePriceInput" class="form-input" placeholder="90,00" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Categoria</label>
-              <select id="serviceCategoryInput" class="form-select"></select>
-            </div>
-          </div>
-
-          <!-- SELETOR DE TEMPO TIPO RELÓGIO (Incremento de 5 em 5 min) -->
-          <div class="form-group">
-            <label class="form-label">Duração Estimada</label>
-            <div class="time-picker-container">
-              <div class="time-field">
-                <label>HORAS</label>
-                <div class="time-controls">
-                  <button type="button" class="time-btn" onclick="adjustTime('hours', -1)">-</button>
-                  <span id="inputHours" class="time-value">0</span>
-                  <button type="button" class="time-btn" onclick="adjustTime('hours', 1)">+</button>
-                </div>
-              </div>
-              <div class="time-separator">:</div>
-              <div class="time-field">
-                <label>MINUTOS</label>
-                <div class="time-controls">
-                  <button type="button" class="time-btn" onclick="adjustTime('minutes', -5)">-</button>
-                  <span id="inputMinutes" class="time-value">30</span>
-                  <button type="button" class="time-btn" onclick="adjustTime('minutes', 5)">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" id="btnSaveText">Salvar Serviço</button>
-        </form>
+          <div id="categoryManageList"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- MODAL DE GERENCIAMENTO DE CATEGORIAS (CRUD COMPLETO DE CATEGORIAS) -->
-    <div class="modal-overlay" id="categoryModal" onclick="closeModal('categoryModal')">
-      <div class="bottom-sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title" id="catModalTitle">Gerenciar Categorias</div>
-        
-        <form id="categoryForm" onsubmit="handleCategorySubmit(event)" style="display: flex; gap: 8px; margin-bottom: 16px;">
-          <input type="hidden" id="editCatId">
-          <input type="text" id="newCategoryInput" class="form-input" placeholder="Nova Categoria..." required style="flex: 1;">
-          <button type="submit" id="catBtnText" class="btn-submit" style="width: auto; margin-top: 0; padding: 0 16px;">Adicionar</button>
-        </form>
+      <!-- FAB BUTTON -->
+      <button class="fab-add" onclick="openCreateServiceModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+      </button>
 
-        <div id="categoryManageList"></div>
-      </div>
-    </div>
-
-    <!-- FAB BUTTON -->
-    <button class="fab-add" onclick="openCreateServiceModal()">
-      <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-    </button>
-
-    <!-- MENU INFERIOR -->
-    <nav class="bottom-nav">
-      <!-- Link Início: Direciona para home.html -->
-      <a href="home.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
-        Início
-      </a>
-      
-      <!-- Link Agenda: Direciona para agenda.html -->
-      <a href="agenda.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
-        Agenda
-      </a>
-      
-      <!-- Link Serviços: Continua com a classe "active" porque estamos na servicos.html -->
-      <a href="servicos.html" class="nav-item active">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
-        Serviços
-      </a>
-      
-      <!-- Link Ajustes: Direciona para ajustes.html -->
-      <a href="ajustes.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
-        Ajustes
-      </a>
-    </nav>
+    </main>
   </div>
 
   <script>
@@ -559,7 +638,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm56-360v-80h394l-80 80H256Zm0-160v-80h558l-80 80H256Zm568-156-56-56 56 56Zm-412 316v-80h94l-94 94v-14Z"/></svg>
               </button>
               <button class="icon-action-btn delete" onclick="deleteService(${service.id})">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360ZM160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
               </button>
             </div>
           </div>
@@ -568,7 +647,6 @@
       });
     }
 
-    // Seletor de Tempo (Agora com incremento de 5 em 5 minutos)
     function adjustTime(type, amount) {
       if (type === 'hours') {
         formHours = Math.max(0, formHours + amount);
@@ -658,7 +736,6 @@
       }
     }
 
-    // Modal Gerenciamento de Categorias (CRUD Completo de Categorias)
     function openCategoryManagerModal() {
       resetCategoryForm();
       renderCategoryManageList();
@@ -684,7 +761,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm56-360v-80h394l-80 80H256Zm0-160v-80h558l-80 80H256Zm568-156-56-56 56 56Zm-412 316v-80h94l-94 94v-14Z"/></svg>
             </button>
             <button class="icon-action-btn delete" onclick="deleteCategory('${cat.id}')" style="width:28px;height:28px;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360ZM160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
             </button>
           </div>
         `;
@@ -706,7 +783,6 @@
       if (!name) return;
 
       if (editId) {
-        // Atualizar Categoria existente
         const cat = categories.find(c => c.id === editId);
         if (cat) {
           cat.name = name;
@@ -714,7 +790,6 @@
         }
         resetCategoryForm();
       } else {
-        // Criar Nova Categoria
         const id = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
         if (categories.some(c => c.id === id)) {
           alert('Esta categoria já existe!');
