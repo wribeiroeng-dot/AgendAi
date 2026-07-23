@@ -561,20 +561,14 @@
       usuarioAtual = session.user;
       atualizarDataAtual();
 
-      // Busca dados na tabela 'perfis'
-      const { data: perfil } = await supabaseClient
-        .from('perfis')
-        .select('nome, email')
-        .eq('id', usuarioAtual.id)
-        .single();
+      // Busca o nome direto dos metadados nativos do Supabase Auth
+      const nomeCadastrado = usuarioAtual.user_metadata?.display_name;
 
       const greetingTitle = document.getElementById('greetingTitle');
 
-      // Se o usuário já tiver cadastrado o nome:
-      if (perfil && perfil.nome) {
-        greetingTitle.innerText = `Olá, ${perfil.nome}! ✨`;
+      if (nomeCadastrado) {
+        greetingTitle.innerText = `Olá, ${nomeCadastrado}! ✨`;
       } else {
-        // Caso não tenha nome, usa saudação genérica e exibe o modal opcional
         greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
         abrirModalOnboarding();
       }
@@ -599,18 +593,13 @@
         return;
       }
 
-      // Atualiza ou insere o perfil no Supabase
-      const { error } = await supabaseClient
-        .from('perfis')
-        .upsert({
-          id: usuarioAtual.id,
-          email: usuarioAtual.email,
-          nome: nomeDigitado,
-          status: 'ativo'
-        });
+      // Salva o nome direto nos metadados do usuário no Supabase Auth
+      const { data, error } = await supabaseClient.auth.updateUser({
+        data: { display_name: nomeDigitado }
+      });
 
       if (error) {
-        console.error("Erro ao salvar:", error);
+        console.error("Erro ao salvar nome:", error);
         exibirToast("Erro ao salvar. Tente novamente.");
         return;
       }
