@@ -12,6 +12,7 @@
 
   <style>
     :root {
+      /* Paleta Azul Marinho Luxo & Dourado */
       --bg: #0b132b;
       --card-bg: #1c2541;
       --card-border: rgba(212, 175, 55, 0.2);
@@ -19,6 +20,7 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --input-bg: #0f172a;
+      --sidebar-width: 260px;
       --status-canceled: #ef4444;
     }
 
@@ -28,24 +30,73 @@
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
-      justify-content: center;
       min-height: 100vh;
-      padding: 12px;
+      width: 100vw;
       overflow-x: hidden;
     }
 
-    .app-container {
+    /* LAYOUT WRAPPER (Padronizado com Home, Agenda e Serviços) */
+    .layout-wrapper {
+      display: flex;
       width: 100%;
-      max-width: 410px;
-      height: 780px;
+      min-height: 100vh;
+    }
+
+    /* NAVEGAÇÃO / MENU LATERAL (Padronizado) */
+    .app-navigation {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 28px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      width: 100%;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: var(--accent);
+      background: rgba(212, 175, 55, 0.1);
+    }
+    .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ÁREA DE CONTEÚDO PRINCIPAL */
+    .main-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
+      height: 100vh;
     }
 
     .tab-content {
@@ -53,23 +104,23 @@
       flex: 1;
       flex-direction: column;
       overflow: hidden;
-      padding: 24px 0 0 0;
+      padding: 0;
     }
 
     /* CABEÇALHO */
     .page-header {
-      padding: 0 20px;
+      padding: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       flex-shrink: 0;
     }
-    .page-title { font-size: 20px; font-weight: 800; }
+    .page-title { font-size: 24px; font-weight: 800; }
 
     /* ABA DE AJUSTES ESTILO LISTA CONFIG */
     .settings-body {
-      padding: 0 20px 100px 20px;
+      padding: 0 0 100px 0;
       overflow-y: auto;
       flex: 1;
       scrollbar-width: none;
@@ -119,6 +170,7 @@
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       color: var(--accent);
+      flex-shrink: 0;
     }
     .settings-icon svg { width: 16px; height: 16px; fill: currentColor; }
 
@@ -132,6 +184,7 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
     }
 
     /* MODAL BOTTOM SHEET */
@@ -186,7 +239,9 @@
       width: 100%; background: var(--accent); color: #0b132b;
       border: none; border-radius: 12px; padding: 14px;
       font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
+      transition: opacity 0.2s;
     }
+    .btn-submit:active { opacity: 0.85; }
 
     /* TOAST */
     .toast {
@@ -199,133 +254,166 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* NAV */
-    .bottom-nav {
-      position: absolute; bottom: 0; left: 0; width: 100%;
-      background: rgba(11, 19, 43, 0.95); backdrop-filter: blur(10px);
-      border-top: 1px solid var(--card-border); display: flex;
-      justify-content: space-around; padding: 16px 10px 24px 10px;
-      border-radius: 0 0 28px 28px; z-index: 20;
+    /* RESPONSIVIDADE (Mobile vs Desktop idêntico às demais telas) */
+    @media (max-width: 1023px) {
+      .layout-wrapper { flex-direction: column; }
+      .main-container { padding-bottom: 90px; height: 100vh; }
+      .app-navigation {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 65px;
+        background: rgba(11, 19, 43, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--card-border);
+        border-right: none;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 10px;
+      }
+      .nav-links { justify-content: space-around; }
+      .nav-item {
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        padding: 6px 12px;
+        width: auto;
+        text-align: center;
+      }
     }
-    .nav-item {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 600;
-      cursor: pointer; border: none; background: transparent;
+
+    @media (min-width: 1024px) {
+      .app-navigation {
+        width: var(--sidebar-width);
+        flex-direction: column;
+        padding: 30px 20px;
+        position: sticky;
+        top: 0; height: 100vh;
+      }
+      .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
+      .nav-links { flex-direction: column; gap: 8px; height: 100%; }
+      .nav-item { font-size: 15px; padding: 14px 16px; }
+      .main-container { padding: 40px; }
     }
-    .nav-item.active { color: var(--accent); }
-    .nav-item svg { fill: currentColor; width: 22px; height: 22px; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <div id="toast" class="toast">Ação realizada com sucesso!</div>
-    
-    <!-- CONTEÚDO: AJUSTES -->
-    <div class="tab-content">
-      <div class="page-header">
-        <h1 class="page-title">Ajustes</h1>
+  <div class="layout-wrapper">
+
+    <!-- NAVEGAÇÃO LATERAL / INFERIOR (Padronizada) -->
+    <nav class="app-navigation">
+      <div class="brand-logo">AgendAi.</div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+          Início
+        </a>
+        <a href="agenda.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
+          Agenda
+        </a>
+        <a href="servicos.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
+          Serviços
+        </a>
+        <a href="ajustes.html" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110-190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+          Ajustes
+        </a>
       </div>
-
-      <div class="settings-body">
-        
-        <div class="settings-section-title">Negócio & Perfil</div>
-        <div class="settings-card">
-          <div class="settings-item" onclick="openProfileModal()">
-            <div class="settings-item-left">
-              <div class="settings-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
-              </div>
-              <div>
-                <div class="settings-label">Perfil do Usuário</div>
-                <div class="settings-subtext" id="currentUserDisplay">AgendaAI-Adm</div>
-              </div>
-            </div>
-            <div class="settings-value">Editar &gt;</div>
-          </div>
-
-          <div class="settings-item" onclick="showToast('Configurando horários...')">
-            <div class="settings-item-left">
-              <div class="settings-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m612-292-56-56 104-104H440v-80h220L556-636l56-56 200 200-200 200ZM400-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-800q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T400-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-              </div>
-              <div>
-                <div class="settings-label">Horários de Funcionamento</div>
-                <div class="settings-subtext">Dias e expediente da agenda</div>
-              </div>
-            </div>
-            <div class="settings-value">08:00 - 19:00</div>
-          </div>
-        </div>
-
-        <div class="settings-section-title">Preferências do Sistema</div>
-        <div class="settings-card">
-          <div class="settings-item" onclick="showToast('Opção de notificações alternada')">
-            <div class="settings-item-left">
-              <div class="settings-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-              </div>
-              <div>
-                <div class="settings-label">Notificações e Lembretes</div>
-                <div class="settings-subtext">Avisos automáticos de agendamento</div>
-              </div>
-            </div>
-            <div class="settings-value" style="color: var(--accent);">Ativo</div>
-          </div>
-
-          <div class="settings-item" onclick="showToast('Saindo da sessão...')">
-            <div class="settings-item-left">
-              <div class="settings-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--status-canceled);">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-56-58 102-102H360v-80h326L584-622l56-58 200 200-200 200Z"/></svg>
-              </div>
-              <div>
-                <div class="settings-label" style="color: var(--status-canceled);">Sair da Conta</div>
-                <div class="settings-subtext">Encerrar sessão atual no dispositivo</div>
-              </div>
-            </div>
-            <div class="settings-value">&gt;</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
-    <div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
-      <div class="bottom-sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title">Editar Nome do Perfil</div>
-        
-        <form id="profileForm" onsubmit="handleProfileSubmit(event)">
-          <div class="form-group">
-            <label class="form-label">Nome de Exibição</label>
-            <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
-          </div>
-
-          <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- MENU INFERIOR (Com redirecionamento correto para cada página) -->
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="window.location.href='home.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
-        Início
-      </button>
-      <button class="nav-item" onclick="window.location.href='agenda.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
-        Agenda
-      </button>
-      <button class="nav-item" onclick="window.location.href='servicos.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
-        Serviços
-      </button>
-      <button class="nav-item active" onclick="window.location.href='ajustes.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110-190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
-        Ajustes
-      </button>
     </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-container">
+      <div id="toast" class="toast">Ação realizada com sucesso!</div>
+      
+      <!-- CONTEÚDO: AJUSTES -->
+      <div class="tab-content">
+        <div class="page-header">
+          <h1 class="page-title">Ajustes</h1>
+        </div>
+
+        <div class="settings-body">
+          
+          <div class="settings-section-title">Negócio & Perfil</div>
+          <div class="settings-card">
+            <div class="settings-item" onclick="openProfileModal()">
+              <div class="settings-item-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Perfil do Usuário</div>
+                  <div class="settings-subtext" id="currentUserDisplay">AgendaAI-Adm</div>
+                </div>
+              </div>
+              <div class="settings-value">Editar &gt;</div>
+            </div>
+
+            <div class="settings-item" onclick="showToast('Configurando horários...')">
+              <div class="settings-item-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m612-292-56-56 104-104H440v-80h220L556-636l56-56 200 200-200 200ZM400-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-800q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T400-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Horários de Funcionamento</div>
+                  <div class="settings-subtext">Dias e expediente da agenda</div>
+                </div>
+              </div>
+              <div class="settings-value">08:00 - 19:00</div>
+            </div>
+          </div>
+
+          <div class="settings-section-title">Preferências do Sistema</div>
+          <div class="settings-card">
+            <div class="settings-item" onclick="showToast('Opção de notificações alternada')">
+              <div class="settings-item-left">
+                <div class="settings-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label">Notificações e Lembretes</div>
+                  <div class="settings-subtext">Avisos automáticos de agendamento</div>
+                </div>
+              </div>
+              <div class="settings-value" style="color: var(--accent);">Ativo</div>
+            </div>
+
+            <div class="settings-item" onclick="showToast('Saindo da sessão...')">
+              <div class="settings-item-left">
+                <div class="settings-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--status-canceled);">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-56-58 102-102H360v-80h326L584-622l56-58 200 200-200 200Z"/></svg>
+                </div>
+                <div>
+                  <div class="settings-label" style="color: var(--status-canceled);">Sair da Conta</div>
+                  <div class="settings-subtext">Encerrar sessão atual no dispositivo</div>
+                </div>
+              </div>
+              <div class="settings-value">&gt;</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MODAL DE EDIÇÃO DE PERFIL / NOME -->
+      <div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Editar Nome do Perfil</div>
+          
+          <form id="profileForm" onsubmit="handleProfileSubmit(event)">
+            <div class="form-group">
+              <label class="form-label">Nome de Exibição</label>
+              <input type="text" id="userNameInput" class="form-input" placeholder="Ex: AgendaAI-Adm" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+
+    </main>
   </div>
 
   <script>
