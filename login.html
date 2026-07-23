@@ -275,11 +275,12 @@
       }
     }
 
-    // Exibe mensagens de Erro ou Sucesso
+    // Exibe mensagens de Erro ou Sucesso de forma visível
     function showMsg(text, type = 'error') {
       const msgBox = document.getElementById('msg-box');
       msgBox.innerText = text;
       msgBox.className = `msg-feedback ${type}`;
+      msgBox.style.display = 'block'; // Garante que a caixa de mensagem fique visível
     }
 
     function hideMsg() {
@@ -308,7 +309,9 @@
             password: password
           });
 
-          if (error) throw new Error("E-mail ou senha incorretos.");
+          if (error) {
+            throw new Error("E-mail ou senha incorretos.");
+          }
 
           // Valida a permissão no banco de dados (tabela perfis)
           const { data: perfil, error: perfilErr } = await supabaseClient
@@ -326,7 +329,7 @@
             throw new Error("Sua conta está bloqueada ou pendente de liberação.");
           }
 
-          // Se estiver ativo, vai para a Home
+          // Se estiver tudo OK, redireciona para a Home
           window.location.href = "home.html";
 
         } else {
@@ -344,7 +347,7 @@
           toggleMode(); // Volta para a tela de login
         }
       } catch (err) {
-        showMsg(err.message || "Ocorreu um erro. Tente novamente.");
+        showMsg(err.message || "Ocorreu um erro ao tentar acessar.", "error");
       } finally {
         btn.disabled = false;
         btn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
@@ -356,13 +359,13 @@
       event.preventDefault();
       const email = document.getElementById('email').value.trim();
       if (!email) {
-        showMsg("Digite seu e-mail no campo acima primeiro.");
+        showMsg("Digite seu e-mail no campo acima primeiro.", "error");
         return;
       }
 
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
       if (error) {
-        showMsg("Erro ao enviar e-mail de recuperação.");
+        showMsg("Erro ao enviar e-mail de recuperação.", "error");
       } else {
         showMsg("E-mail de redefinição enviado! Verifique sua caixa de entrada.", "success");
       }
@@ -373,7 +376,7 @@
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google'
       });
-      if (error) showMsg("Erro ao conectar com o Google.");
+      if (error) showMsg("Erro ao conectar com o Google.", "error");
     }
   </script>
 
