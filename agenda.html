@@ -20,12 +20,15 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --input-bg: #0f172a;
+      --sidebar-width: 260px;
       
       /* Cores de Status */
       --status-confirmed: #22c55e; /* Verde */
       --status-pending: #f59e0b;   /* Laranja */
       --status-canceled: #ef4444;  /* Vermelho */
       --status-blocked: #64748b;   /* Cinza */
+      --status-online: #22c55e;
+      --status-offline: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -34,42 +37,85 @@
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
       width: 100vw;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
-    /* Container ocupa 100% da tela em celulares */
-    .app-container {
-      width: 100vw;
-      height: 100vh;
+    /* LAYOUT WRAPPER (Igual Home) */
+    .layout-wrapper {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* NAVEGAÇÃO / MENU LATERAL (Padronizado com a Home) */
+    .app-navigation {
       background: var(--card-bg);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      width: 100%;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: var(--accent);
+      background: rgba(212, 175, 55, 0.1);
+    }
+    .nav-item.logout-item:hover {
+      color: var(--status-offline);
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ÁREA DE CONTEÚDO PRINCIPAL */
+    .main-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
-    }
-
-    .main-content {
-      padding: 24px 0 0 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      height: 100vh;
     }
 
     /* CABEÇALHO */
     .page-header {
-      padding: 0 20px;
+      padding: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
       flex-shrink: 0;
     }
-    .page-title { font-size: 20px; font-weight: 800; }
+    .page-title { font-size: 24px; font-weight: 800; }
     .month-selector {
       display: flex;
       align-items: center;
@@ -87,7 +133,7 @@
     .date-picker {
       display: flex;
       gap: 12px;
-      padding: 0 20px 20px 20px;
+      padding: 0 0 20px 0;
       overflow-x: auto;
       scrollbar-width: none;
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -124,7 +170,7 @@
     .filters {
       display: flex;
       gap: 6px;
-      padding: 16px 20px;
+      padding: 16px 0;
       flex-shrink: 0;
     }
     
@@ -150,7 +196,7 @@
 
     /* LISTA DA AGENDA - SCROLL EXPANDIDO */
     .agenda-list { 
-      padding: 0 20px 100px 20px;
+      padding: 0 0 100px 0;
       display: flex; 
       flex-direction: column; 
       gap: 14px; 
@@ -186,7 +232,7 @@
       font-weight: 800;
       color: var(--text-main);
       z-index: 1;
-      background: var(--card-bg);
+      background: var(--bg);
     }
 
     .card-col {
@@ -380,8 +426,8 @@
     /* FLOATING ACTION BUTTON */
     .fab-add {
       position: absolute;
-      bottom: 90px;
-      right: 20px;
+      bottom: 30px;
+      right: 30px;
       width: 56px;
       height: 56px;
       background: var(--accent);
@@ -398,92 +444,79 @@
     }
     .fab-add:active { transform: scale(0.9); }
 
-    /* BOTTOM NAV (Mobile) */
-    .bottom-nav {
-      position: absolute;
-      bottom: 0; left: 0; width: 100%;
-      background: rgba(11, 19, 43, 0.95);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid var(--card-border);
-      display: flex;
-      justify-content: space-around;
-      padding: 16px 10px 24px 10px;
-      z-index: 20;
-    }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 10px;
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-    .nav-item.active { color: var(--accent); }
-    .nav-item svg { fill: currentColor; width: 22px; height: 22px; }
-
-    /* RESPONSIVIDADE PARA NOTEBOOK / DESKTOP (Menu Lateral e Tela Completa) */
-    @media (min-width: 768px) {
-      .app-container {
-        width: 100vw;
-        height: 100vh;
-        flex-direction: row; /* Coloca o menu à esquerda e o conteúdo ao lado preenchendo tudo */
-        border-radius: 0;
-      }
-
-      .main-content {
-        padding: 24px 0 0 0;
-        order: 1; 
-      }
-
-      /* Transforma o menu inferior em um menu lateral estilo app profissional */
-      .bottom-nav {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        width: 110px;
-        height: 100%;
-        flex-direction: column;
-        justify-content: flex-start;
+    /* RESPONSIVIDADE (Mobile vs Desktop igual Home) */
+    @media (max-width: 1023px) {
+      .layout-wrapper { flex-direction: column; }
+      .main-container { padding-bottom: 90px; height: 100vh; }
+      .app-navigation {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 65px;
+        background: rgba(11, 19, 43, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--card-border);
+        border-right: none;
+        justify-content: space-around;
         align-items: center;
-        gap: 30px;
-        padding: 40px 10px;
-        border-top: none;
-        border-right: 1px solid var(--card-border);
-        order: 0; 
+        padding: 0 10px;
       }
-
+      .nav-links { justify-content: space-around; }
       .nav-item {
+        flex-direction: column;
+        gap: 4px;
         font-size: 11px;
+        padding: 6px 12px;
       }
+    }
 
-      .nav-item svg {
-        width: 26px;
-        height: 26px;
+    @media (min-width: 1024px) {
+      .app-navigation {
+        width: var(--sidebar-width);
+        flex-direction: column;
+        padding: 30px 20px;
+        position: sticky;
+        top: 0; height: 100vh;
       }
-
-      .agenda-list {
-        padding-bottom: 30px; 
-      }
-
-      .fab-add {
-        bottom: 30px;
-        right: 30px;
-      }
+      .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
+      .nav-links { flex-direction: column; gap: 8px; height: 100%; }
+      .nav-item { font-size: 15px; padding: 14px 16px; }
+      .main-container { padding: 40px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="layout-wrapper">
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Status atualizado!</div>
-    
-    <div class="main-content">
+    <!-- NAVEGAÇÃO LATERAL (Idêntica à Home)[cite: 8] -->
+    <nav class="app-navigation">
+      <div class="brand-logo">AgendAi.</div>
+      <div class="nav-links">
+        <a href="home.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+          Início
+        </a>
+        <a href="agenda.html" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
+          Agenda
+        </a>
+        <a href="servicos.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
+          Serviços
+        </a>
+        <a href="ajustes.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+          Ajustes
+        </a>
+      </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-container">
       
+      <!-- Toast Notification -->
+      <div id="toast" class="toast">Status atualizado!</div>
+
       <!-- Cabeçalho -->
       <div class="page-header">
         <h1 class="page-title">Agenda</h1>
@@ -642,79 +675,53 @@
         </div>
 
       </div>
-    </div>
 
-    <!-- MODAL SELETOR DE STATUS -->
-    <div class="modal-overlay" id="statusModal" onclick="closeStatusModal(event)">
-      <div class="bottom-sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title" id="modalClientTitle">Alterar Status</div>
-        <div class="sheet-subtitle" id="modalClientSubtitle">Selecione a situação deste horário</div>
+      <!-- MODAL SELETOR DE STATUS -->
+      <div class="modal-overlay" id="statusModal" onclick="closeStatusModal(event)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title" id="modalClientTitle">Alterar Status</div>
+          <div class="sheet-subtitle" id="modalClientSubtitle">Selecione a situação deste horário</div>
 
-        <div class="status-options">
-          <button class="status-option-btn" onclick="applyStatusChange('confirmed')">
-            <span class="option-label">
-              <span class="status-indicator-dot dot-confirmed"></span>
-              Confirmado
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#22c55e"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-          </button>
-          <button class="status-option-btn" onclick="applyStatusChange('pending')">
-            <span class="option-label">
-              <span class="status-indicator-dot dot-pending"></span>
-              Pendente (Aguardando)
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#f59e0b"><path d="m105-120 375-640 375 640H105Z"/></svg>
-          </button>
-          <button class="status-option-btn" onclick="applyStatusChange('canceled')">
-            <span class="option-label">
-              <span class="status-indicator-dot dot-canceled"></span>
-              Cancelado pelo Cliente / Profissional
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ef4444"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-          </button>
-          <button class="status-option-btn" onclick="applyStatusChange('blocked')">
-            <span class="option-label">
-              <span class="status-indicator-dot dot-blocked"></span>
-              Pausa / Horário Bloqueado
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#64748b"><path d="M240-200h120v-560H240v560Zm360 0h120v-560H600v560Z"/></svg>
-          </button>
+          <div class="status-options">
+            <button class="status-option-btn" onclick="applyStatusChange('confirmed')">
+              <span class="option-label">
+                <span class="status-indicator-dot dot-confirmed"></span>
+                Confirmado
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#22c55e"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
+            </button>
+            <button class="status-option-btn" onclick="applyStatusChange('pending')">
+              <span class="option-label">
+                <span class="status-indicator-dot dot-pending"></span>
+                Pendente (Aguardando)
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#f59e0b"><path d="m105-120 375-640 375 640H105Z"/></svg>
+            </button>
+            <button class="status-option-btn" onclick="applyStatusChange('canceled')">
+              <span class="option-label">
+                <span class="status-indicator-dot dot-canceled"></span>
+                Cancelado pelo Cliente / Profissional
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ef4444"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </button>
+            <button class="status-option-btn" onclick="applyStatusChange('blocked')">
+              <span class="option-label">
+                <span class="status-indicator-dot dot-blocked"></span>
+                Pausa / Horário Bloqueado
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#64748b"><path d="M240-200h120v-560H240v560Zm360 0h120v-560H600v560Z"/></svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- FAB BUTTON -->
-    <button class="fab-add" onclick="alert('Abrir modal de novo agendamento manual')">
-      <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
-    </button>
+      <!-- FAB BUTTON -->
+      <button class="fab-add" onclick="alert('Abrir modal de novo agendamento manual')">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+      </button>
 
-   <!-- MENU DE NAVEGAÇÃO -->
-    <nav class="bottom-nav">
-      <!-- Link Início: Direciona para home.html -->
-      <a href="home.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
-        Início
-      </a>
-      
-      <!-- Link Agenda: Continua com a classe "active" porque estamos na agenda.html -->
-      <a href="agenda.html" class="nav-item active">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
-        Agenda
-      </a>
-      
-      <!-- Link Serviços: Direciona para servicos.html -->
-      <a href="servicos.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
-        Serviços
-      </a>
-      
-      <!-- Link Ajustes: Direciona para ajustes.html -->
-      <a href="ajustes.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
-        Ajustes
-      </a>
-    </nav>
+    </main>
   </div>
 
   <script>
