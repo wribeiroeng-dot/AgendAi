@@ -173,6 +173,41 @@
     }
     .btn-copy:hover { background: var(--accent); color: #0b132b; }
 
+    /* AVISO DE PERFIL PENDENTE */
+    .profile-warning-banner {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 16px;
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .profile-warning-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .profile-warning-icon { font-size: 28px; }
+    .profile-warning-title { font-weight: 700; font-size: 15px; color: var(--text-main); margin-bottom: 2px; }
+    .profile-warning-text { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+    .btn-complete-profile {
+      background: var(--status-offline);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    .btn-complete-profile:hover { opacity: 0.9; }
+
     /* DASHBOARD GRID E CARDS */
     .kpi-grid {
       display: grid;
@@ -240,124 +275,6 @@
       cursor: pointer; color: #0b132b; z-index: 99;
     }
 
-    /* MODAL FLUTUANTE DE BOAS-VINDAS */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(11, 19, 43, 0.85);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1500;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s ease;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 32px;
-      max-width: 460px;
-      width: 100%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      text-align: center;
-      position: relative;
-    }
-
-    .modal-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-
-    .modal-title {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 8px;
-    }
-
-    .modal-description {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .input-group {
-      text-align: left;
-      margin-bottom: 16px;
-    }
-    .input-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 12px 16px;
-      background: var(--input-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      color: var(--text-main);
-      font-size: 15px;
-      outline: none;
-    }
-    .input-group input:focus {
-      border-color: var(--accent);
-    }
-
-    .modal-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0b132b;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 15px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .btn-primary:hover { opacity: 0.9; }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text-muted);
-      border: none;
-      padding: 10px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .btn-secondary:hover { color: var(--text-main); }
-
-    .modal-notice {
-      font-size: 12px;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.03);
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 16px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
     /* MEDIA QUERIES */
     @media (max-width: 1023px) {
       .layout-wrapper { flex-direction: column; }
@@ -406,36 +323,6 @@
 <body>
 
   <div id="toast" class="toast">Link copiado com sucesso! ✅</div>
-
-  <!-- MODAL FLUTUANTE DE BOAS-VINDAS COM NOME E WHATSAPP (MÁSCARA DE CELULAR) -->
-  <div id="welcomeModal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-icon">🎉</div>
-      <h2 class="modal-title">Boas-vindas ao AgendAi!</h2>
-      <p class="modal-description">
-        Preencha os dados abaixo para configurar o seu perfil e liberar a sua agenda.
-      </p>
-
-      <div class="input-group">
-        <label for="onboardingNome">Seu Nome / Estúdio</label>
-        <input type="text" id="onboardingNome" placeholder="Ex: Studio da Ana ou Ana">
-      </div>
-
-      <div class="input-group">
-        <label for="onboardingWhatsapp">Número do WhatsApp</label>
-        <input type="text" id="onboardingWhatsapp" placeholder="(31) 99999-9999" maxlength="15" oninput="aplicarMascaraWhatsapp(this)">
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-primary" onclick="salvarNomeOnboarding()">Salvar e Continuar</button>
-        <button class="btn-secondary" onclick="fecharModalOnboarding()">Preencher depois com calma</button>
-      </div>
-
-      <p class="modal-notice">
-        ✨ <strong>Seu teste grátis já está ativo!</strong> Você pode alterar suas informações a qualquer momento no menu <em>Ajustes</em>.
-      </p>
-    </div>
-  </div>
 
   <div class="layout-wrapper">
     <!-- NAVEGAÇÃO -->
@@ -487,6 +374,18 @@
             </label>
           </div>
         </div>
+      </div>
+
+      <!-- AVISO DE PERFIL PENDENTE (EXIBIDO CASO NÃO TENHA NOME CADASTRADO) -->
+      <div id="profileWarningBanner" class="profile-warning-banner" style="display: none;">
+        <div class="profile-warning-content">
+          <div class="profile-warning-icon">⚠️</div>
+          <div>
+            <div class="profile-warning-title">Finalize seu cadastro</div>
+            <div class="profile-warning-text">Assim que você for completar o seu perfil em <strong>Ajustes</strong>-><strong>Perfil do Usuário</strong>, será liberado o link para agendamento.</div>
+          </div>
+        </div>
+        <a href="ajustes.html" class="btn-complete-profile">Completar Perfil</a>
       </div>
 
       <!-- CARDS DE KPIS -->
@@ -542,22 +441,7 @@
 
     let usuarioAtual = null;
 
-    // 2. MÁSCARA DO WHATSAPP (APENAS NÚMEROS)
-    function aplicarMascaraWhatsapp(input) {
-      let valor = input.value.replace(/\D/g, ''); // Remove tudo que não for número
-      if (valor.length > 11) valor = valor.slice(0, 11); // Limita a 11 dígitos (DDD + 9)
-
-      if (valor.length > 7) {
-        valor = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
-      } else if (valor.length > 2) {
-        valor = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
-      } else if (valor.length > 0) {
-        valor = `(${valor}`;
-      }
-      input.value = valor;
-    }
-
-    // 3. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
+    // 2. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
     async function checarAutenticacao() {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
@@ -571,77 +455,18 @@
 
       const nomeCadastrado = usuarioAtual.user_metadata?.display_name;
       const greetingTitle = document.getElementById('greetingTitle');
+      const warningBanner = document.getElementById('profileWarningBanner');
 
       if (nomeCadastrado) {
         greetingTitle.innerText = `Olá, ${nomeCadastrado}! ✨`;
+        warningBanner.style.display = 'none';
       } else {
         greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
-        abrirModalOnboarding();
+        warningBanner.style.display = 'flex';
       }
     }
 
-    // 4. GERENCIAMENTO DO MODAL
-    function abrirModalOnboarding() {
-      const modal = document.getElementById('welcomeModal');
-      modal.classList.add('active');
-    }
-
-    function fecharModalOnboarding() {
-      const modal = document.getElementById('welcomeModal');
-      modal.classList.remove('active');
-    }
-
-    // 5. SALVAR DADOS NO SUPABASE (ATUALIZANDO NAS 3 TABELAS: assinantes, perfis, usuarios)
-    async function salvarNomeOnboarding() {
-      const nomeDigitado = document.getElementById('onboardingNome').value.trim();
-      const whatsappDigitado = document.getElementById('onboardingWhatsapp').value.trim();
-
-      if (!nomeDigitado) {
-        exibirToast("Por favor, preencha o nome ou estúdio.");
-        return;
-      }
-
-      if (!whatsappDigitado || whatsappDigitado.length < 14) {
-        exibirToast("Por favor, informe um número de WhatsApp válido.");
-        return;
-      }
-
-      const userId = usuarioAtual.id;
-
-      try {
-        // A. Atualiza nos metadados de autenticação do Supabase
-        const { error: authError } = await supabaseClient.auth.updateUser({
-          data: { display_name: nomeDigitado, whatsapp: whatsappDigitado }
-        });
-        if (authError) throw authError;
-
-        // B. Atualiza na tabela 'assinantes'[cite: 1]
-        await supabaseClient.from('assinantes')
-          .update({ nome: nomeDigitado, whatsapp: whatsappDigitado })
-          .eq('usuario_id', userId);
-
-        // C. Atualiza na tabela 'perfis'[cite: 1]
-        await supabaseClient.from('perfis')
-          .update({ nome: nomeDigitado})
-          .eq('usuario_id', userId);
-
-        // D. Atualiza na tabela 'usuarios'[cite: 1]
-        await supabaseClient.from('usuarios')
-          .update({ nome: nomeDigitado })
-          .eq('id', userId);
-
-        // Atualiza a interface instantaneamente
-        document.getElementById('greetingTitle').innerText = `Olá, ${nomeDigitado}! ✨`;
-        fecharModalOnboarding();
-        exibirToast("Perfil e WhatsApp salvos com sucesso! 🎉");
-
-      } catch (error) {
-        console.error("Erro ao salvar dados:", error);
-        exibirToast("Erro ao salvar dados no banco. Tente novamente.");
-      }
-    }
-
-    // 6. FUNÇÕES UTILITÁRIAS
+    // 3. FUNÇÕES UTILITÁRIAS
     function atualizarDataAtual() {
       const hoje = new Date();
       const opcoes = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -688,7 +513,7 @@
       setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // Inicializa a verificação de autenticação e onboarding
+    // Inicializa a verificação de autenticação
     checarAutenticacao();
   </script>
 </body>
