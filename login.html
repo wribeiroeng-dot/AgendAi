@@ -3,26 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acessar - AgendAi</title>
-  
+  <title>AgendAi - Acessar Conta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
-
-  <!-- SDK OFICIAL DO SUPABASE -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --bg-light: #F8FAFC;
-      --card-bg: #FFFFFF;
       --text-dark: #0F172A;
-      --text-gray: #64748B;
-      --border-color: #E2E8F0;
+      --text-gray: #475569;
       --primary: #4F46E5;
-      --primary-hover: #4338CA;
-      --error-color: #EF4444;
-      --success-color: #22C55E;
+      --action: #10B981;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -30,355 +22,318 @@
     body {
       background-color: var(--bg-light);
       color: var(--text-dark);
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
-    .login-container {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 400px;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      text-align: center;
-    }
-
-    .logo {
+    /* TOPO COM LOGO */
+    .header-logo {
+      margin-bottom: 30px;
+      text-decoration: none;
       font-size: 28px;
       font-weight: 800;
       color: var(--primary);
       letter-spacing: -1px;
-      margin-bottom: 8px;
-      text-decoration: none;
-      display: inline-block;
     }
 
-    .subtitle {
-      font-size: 14px;
-      color: var(--text-gray);
-      margin-bottom: 30px;
-    }
-
-    /* BOTÃO DO GOOGLE */
-    .btn-google {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 12px;
+    /* CARD CONTAINER */
+    .auth-card {
       background: #FFFFFF;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* NAVEGAÇÃO POR ABAS */
+    .tabs {
+      display: flex;
+      background: #F1F5F9;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
       font-size: 14px;
       font-weight: 600;
-      color: var(--text-dark);
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 24px;
-    }
-    .btn-google:hover {
-      background: #F1F5F9;
-      border-color: #CBD5E1;
-    }
-    .btn-google svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    /* DIVISOR */
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
       color: var(--text-gray);
-      font-size: 12px;
-      margin-bottom: 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .divider span {
-      padding: 0 10px;
+    .tab-btn.active {
+      background: #FFFFFF;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
-    /* FORMULÁRIO */
-    .input-group {
-      text-align: left;
-      margin-bottom: 16px;
+    /* FORMULÁRIOS */
+    .form-container { display: none; }
+    .form-container.active { display: block; }
+
+    .form-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
     }
-    .input-group label {
+    .form-subtitle {
+      font-size: 13px;
+      color: var(--text-gray);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .form-group label {
       display: block;
       font-size: 13px;
       font-weight: 600;
       margin-bottom: 6px;
-      color: var(--text-dark);
     }
-    .input-group input {
+    .form-group input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border 0.2s;
     }
-    .input-group input:focus {
+    .form-group input:focus {
       border-color: var(--primary);
-    }
-
-    .forgot-password {
-      display: block;
-      text-align: right;
-      font-size: 12px;
-      color: var(--primary);
-      text-decoration: none;
-      margin-top: 6px;
-      font-weight: 500;
     }
 
     .btn-submit {
       width: 100%;
-      padding: 12px;
       background: var(--primary);
       color: #FFFFFF;
       border: none;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 800;
       cursor: pointer;
       transition: background 0.2s;
-      margin-top: 10px;
+      margin-top: 8px;
+    }
+    .btn-submit.action-btn {
+      background: var(--action);
     }
     .btn-submit:hover {
-      background: var(--primary-hover);
+      opacity: 0.95;
     }
     .btn-submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    /* MENSAGENS DE ALERTA */
-    .msg-feedback {
-      font-size: 13px;
-      margin-top: 14px;
+    .msg-box {
       display: none;
       padding: 10px;
-      border-radius: 6px;
-      text-align: center;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
     }
-    .msg-feedback.error {
-      display: block;
+    .msg-box.error {
       background: #FEE2E2;
-      color: var(--error-color);
-    }
-    .msg-feedback.success {
+      color: #991B1B;
       display: block;
-      background: #DCFCE7;
-      color: var(--success-color);
     }
-
-    /* RODAPÉ DO LOGIN */
-    .login-footer {
-      margin-top: 24px;
-      font-size: 14px;
-      color: var(--text-gray);
-    }
-    .login-footer a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .login-footer a:hover {
-      text-decoration: underline;
+    .msg-box.success {
+      background: #D1FAE5;
+      color: #065F46;
+      display: block;
     }
   </style>
 </head>
 <body>
 
-  <div class="login-container">
-    <a href="index.html" class="logo">AgendAi.</a>
-    <p class="subtitle" id="form-subtitle">Acesse sua conta ou inicie seu teste grátis</p>
+  <!-- VOLTAR / LOGO -->
+  <a href="index.html" class="header-logo">AgendAi.</a>
 
-    <!-- Botão do Google -->
-    <button class="btn-google" type="button" onclick="loginGoogle()">
-      <svg viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg>
-      Continuar com o Google
-    </button>
-
-    <div class="divider">
-      <span>ou use seu e-mail</span>
+  <!-- CARD PRINCIPAL -->
+  <div class="auth-card">
+    
+    <!-- ABAS -->
+    <div class="tabs">
+      <button type="button" class="tab-btn active" id="tabLogin" onclick="window.alternarAba('login')">Entrar</button>
+      <button type="button" class="tab-btn" id="tabCadastro" onclick="window.alternarAba('cadastro')">Criar Conta</button>
     </div>
 
-    <!-- Formulário de Autenticação -->
-    <form id="auth-form" onsubmit="handleAuth(event)">
-      <div class="input-group">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" placeholder="seu@email.com" required>
-      </div>
+    <!-- MENSAGENS DE ALERTA -->
+    <div id="msgAlerta" class="msg-box"></div>
 
-      <div class="input-group">
-        <label for="password">Senha</label>
-        <input type="password" id="password" placeholder="••••••••" required>
-        <a href="#" class="forgot-password" id="forgot-link" onclick="resetPassword(event)">Esqueceu a senha?</a>
-      </div>
-
-      <button type="submit" class="btn-submit" id="btn-submit-text">Entrar</button>
-      <div id="msg-box" class="msg-feedback"></div>
-    </form>
-
-    <!-- Rodapé que alterna o modo -->
-    <div class="login-footer" id="footer-text">
-      Ainda não tem conta? <a onclick="toggleMode()">Criar conta grátis</a>
+    <!-- FORMULÁRIO DE LOGIN -->
+    <div id="formLogin" class="form-container active">
+      <div class="form-title">Bem-vindo de volta!</div>
+      <div class="form-subtitle">Digite seus dados para acessar o seu painel.</div>
+      
+      <form onsubmit="window.handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" placeholder="Sua senha" required>
+        </div>
+        <button type="submit" id="btnLoginSubmit" class="btn-submit">Entrar no Sistema</button>
+      </form>
     </div>
+
+    <!-- FORMULÁRIO DE CADASTRO (30 DIAS GRÁTIS) -->
+    <div id="formCadastro" class="form-container">
+      <div class="form-title">Comece seus 30 Dias Grátis</div>
+      <div class="form-subtitle">Crie sua conta em menos de 1 minuto. Sem cartão.</div>
+      
+      <form onsubmit="window.handleCadastro(event)">
+        <div class="form-group">
+          <label for="cadEmail">Seu melhor e-mail</label>
+          <input type="email" id="cadEmail" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="cadSenha">Crie uma senha</label>
+          <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        </div>
+        <button type="submit" id="btnCadastrarSubmit" class="btn-submit action-btn">Criar Conta Grátis</button>
+      </form>
+    </div>
+
   </div>
 
+  <!-- SDK OFICIAL DO SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    // 1. INICIALIZAÇÃO DO SUPABASE
-    const SUPABASE_URL = "https://yhecaaajbgetcnfdcqxj.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // 1. FUNÇÕES VISUAIS GLOBAIS
+    window.alternarAba = function(modo) {
+      window.exibirMensagem('', ''); // Limpa alertas anteriores
 
-    let isLoginMode = true;
+      const tabLogin = document.getElementById('tabLogin');
+      const tabCadastro = document.getElementById('tabCadastro');
+      const formLogin = document.getElementById('formLogin');
+      const formCadastro = document.getElementById('formCadastro');
 
-    // Alterna entre modo Login e Cadastro
-    function toggleMode() {
-      isLoginMode = !isLoginMode;
-      const subtitle = document.getElementById('form-subtitle');
-      const submitBtn = document.getElementById('btn-submit-text');
-      const forgotLink = document.getElementById('forgot-link');
-      const footerText = document.getElementById('footer-text');
-      hideMsg();
-
-      if (isLoginMode) {
-        subtitle.innerText = "Acesse sua conta ou inicie seu teste grátis";
-        submitBtn.innerText = "Entrar";
-        forgotLink.style.display = "block";
-        footerText.innerHTML = 'Ainda não tem conta? <a onclick="toggleMode()">Criar conta grátis</a>';
+      if (modo === 'cadastro') {
+        if (tabLogin) tabLogin.classList.remove('active');
+        if (tabCadastro) tabCadastro.classList.add('active');
+        if (formLogin) formLogin.classList.remove('active');
+        if (formCadastro) formCadastro.classList.add('active');
       } else {
-        subtitle.innerText = "Crie sua conta e ganhe 7 dias grátis";
-        submitBtn.innerText = "Cadastrar";
-        forgotLink.style.display = "none";
-        footerText.innerHTML = 'Já tem uma conta? <a onclick="toggleMode()">Fazer Login</a>';
+        if (tabCadastro) tabCadastro.classList.remove('active');
+        if (tabLogin) tabLogin.classList.add('active');
+        if (formCadastro) formCadastro.classList.remove('active');
+        if (formLogin) formLogin.classList.add('active');
       }
-    }
+    };
 
-    // Exibe mensagens de Erro ou Sucesso de forma visível
-    function showMsg(text, type = 'error') {
-      const msgBox = document.getElementById('msg-box');
-      msgBox.innerText = text;
-      msgBox.className = `msg-feedback ${type}`;
-      msgBox.style.display = 'block'; // Garante que a caixa de mensagem fique visível
-    }
+    window.exibirMensagem = function(texto, tipo) {
+      const msgBox = document.getElementById('msgAlerta');
+      if (!msgBox) return;
 
-    function hideMsg() {
-      const msgBox = document.getElementById('msg-box');
-      msgBox.style.display = 'none';
-    }
-
-    // 2. LÓGICA PRINCIPAL DE AUTENTICAÇÃO (LOGIN / CADASTRO)
-    async function handleAuth(event) {
-      event.preventDefault();
-      hideMsg();
-
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const btn = document.getElementById('btn-submit-text');
-
-      btn.disabled = true;
-
-      try {
-        if (isLoginMode) {
-          // --- MODO LOGIN ---
-          btn.innerText = "Entrando...";
-          
-          const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-          });
-
-          if (error) {
-            throw new Error("E-mail ou senha incorretos.");
-          }
-
-          // Valida a permissão no banco de dados (tabela perfis)
-          const { data: perfil, error: perfilErr } = await supabaseClient
-            .from('perfis')
-            .select('status')
-            .eq('id', data.user.id)
-            .single();
-
-          if (perfilErr || !perfil) {
-            throw new Error("Perfil não encontrado no sistema.");
-          }
-
-          if (perfil.status !== 'ativo') {
-            await supabaseClient.auth.signOut(); // Desloga por segurança
-            throw new Error("Sua conta está bloqueada ou pendente de liberação.");
-          }
-
-          // Se estiver tudo OK, redireciona para a Home
-          window.location.href = "home.html";
-
-        } else {
-          // --- MODO CADASTRO ---
-          btn.innerText = "Cadastrando...";
-
-          const { data, error } = await supabaseClient.auth.signUp({
-            email: email,
-            password: password
-          });
-
-          if (error) throw error;
-
-          showMsg("Conta criada com sucesso! Você já pode fazer login.", "success");
-          toggleMode(); // Volta para a tela de login
-        }
-      } catch (err) {
-        showMsg(err.message || "Ocorreu um erro ao tentar acessar.", "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
-      }
-    }
-
-    // 3. RECUPERAÇÃO DE SENHA
-    async function resetPassword(event) {
-      event.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      if (!email) {
-        showMsg("Digite seu e-mail no campo acima primeiro.", "error");
+      if (!texto) {
+        msgBox.className = 'msg-box';
+        msgBox.innerText = '';
         return;
       }
+      msgBox.className = `msg-box ${tipo}`;
+      msgBox.innerText = texto;
+    };
 
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-      if (error) {
-        showMsg("Erro ao enviar e-mail de recuperação.", "error");
-      } else {
-        showMsg("E-mail de redefinição enviado! Verifique sua caixa de entrada.", "success");
+    // Identifica o modo pela URL ao carregar a página (?modo=cadastro)
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('modo') === 'cadastro') {
+        window.alternarAba('cadastro');
       }
+    });
+
+    // 2. CONFIGURAÇÃO DO SUPABASE
+    const SUPABASE_URL = 'https://yhecaaajbgetcnfdcqxj.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFqYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
+    
+    let supabase;
+    if (window.supabase) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // 4. LOGIN COM GOOGLE
-    async function loginGoogle() {
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google'
-      });
-      if (error) showMsg("Erro ao conectar com o Google.", "error");
-    }
+    // 3. PROCESSAR LOGIN
+    window.handleLogin = async function(event) {
+      event.preventDefault();
+      window.exibirMensagem('', '');
+
+      if (!supabase) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginSenha').value;
+      const btn = document.getElementById('btnLoginSubmit');
+
+      try {
+        btn.disabled = true;
+        btn.innerText = 'Entrando...';
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        window.exibirMensagem('Login realizado com sucesso! Redirecionando...', 'success');
+        setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+
+      } catch (error) {
+        window.exibirMensagem(error.message === 'Invalid login credentials' ? 'E-mail ou senha incorretos.' : 'Erro: ' + error.message, 'error');
+        btn.disabled = false;
+        btn.innerText = 'Entrar no Sistema';
+      }
+    };
+
+    // 4. PROCESSAR CADASTRO
+    window.handleCadastro = async function(event) {
+      event.preventDefault();
+      window.exibirMensagem('', '');
+
+      if (!supabase) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
+
+      const email = document.getElementById('cadEmail').value;
+      const password = document.getElementById('cadSenha').value;
+      const btn = document.getElementById('btnCadastrarSubmit');
+
+      try {
+        btn.disabled = true;
+        btn.innerText = 'Criando sua conta...';
+
+        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        if (authError) throw authError;
+
+        const user = authData.user;
+        if (user) {
+          const { error: userTableError } = await supabase.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
+          if (userTableError) throw userTableError;
+
+          const { error: assinanteError } = await supabase.from('assinantes').insert([{
+            usuario_id: user.id, nome: 'Novo Assinante', email_contato: user.email, plano: 'basico', status_assinatura: 'degustacao'
+          }]);
+          if (assinanteError) throw assinanteError;
+
+          window.exibirMensagem('Conta criada com sucesso!', 'success');
+          setTimeout(() => { window.location.href = 'home.html?onboarding=true'; }, 1000);
+        }
+      } catch (error) {
+        window.exibirMensagem('Erro ao criar conta: ' + error.message, 'error');
+        btn.disabled = false;
+        btn.innerText = 'Criar Conta Grátis';
+      }
+    };
   </script>
-
 </body>
 </html>
