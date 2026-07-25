@@ -530,10 +530,28 @@
     }
 
     function copyLink() {
-      const linkFinal = `https://agend.ai/${linkPublicoSlug || usuarioAtual.id}`;
+      // 1. Pega o nome do estabelecimento exibido no título ou busca do perfil do banco
+      const nomeElemento = document.getElementById('greetingTitle').innerText;
+      
+      // Remove o "Olá, " do começo e o "! ✨" do final para isolar apenas o nome do estabelecimento
+      let nomeEstabelecimento = nomeElemento.replace("Olá, ", "").replace("! ✨", "").trim();
+      
+      // Se por acaso o perfil ainda estiver carregando ou sem nome, usa o ID como fallback seguro
+      if (!nomeEstabelecimento || nomeEstabelecimento.includes("Carregando") || nomeEstabelecimento.includes("seja bem-vindo")) {
+        nomeEstabelecimento = linkPublicoSlug || usuarioAtual.id;
+      }
+
+      // 2. Transforma o nome para o formato seguro de URL (ex: "Studio Dezzinha" vira "Studio%20Dezzinha")
+      const nomeFormatado = encodeURIComponent(nomeEstabelecimento);
+      
+      // 3. Monta o link completo apontando para o seu GitHub Pages
+      const linkFinal = `https://wribeiroeng-dot.github.io/AgendAi/?u=${nomeFormatado}`;
+      
+      // 4. Copia para a área de transferência
       navigator.clipboard.writeText(linkFinal).then(() => {
-        exibirToast("Link copiado com sucesso! ✅");
+        exibirToast("Link de agendamento copiado com sucesso! ✅");
       });
+    }
     }
 
     function openWA(nomeCliente, horario, servico) {
