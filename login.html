@@ -30,7 +30,6 @@
       padding: 20px;
     }
 
-    /* TOPO COM LOGO */
     .header-logo {
       margin-bottom: 30px;
       text-decoration: none;
@@ -40,7 +39,6 @@
       letter-spacing: -1px;
     }
 
-    /* CARD CONTAINER */
     .auth-card {
       background: #FFFFFF;
       width: 100%;
@@ -51,7 +49,6 @@
       border: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    /* NAVEGAÇÃO POR ABAS */
     .tabs {
       display: flex;
       background: #F1F5F9;
@@ -77,7 +74,6 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
-    /* FORMULÁRIOS */
     .form-container { display: none; }
     .form-container.active { display: block; }
 
@@ -131,13 +127,8 @@
     .btn-submit.action-btn {
       background: var(--action);
     }
-    .btn-submit:hover {
-      opacity: 0.95;
-    }
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .btn-submit:hover { opacity: 0.95; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .msg-box {
       display: none;
@@ -146,39 +137,27 @@
       font-size: 13px;
       margin-bottom: 16px;
     }
-    .msg-box.error {
-      background: #FEE2E2;
-      color: #991B1B;
-      display: block;
-    }
-    .msg-box.success {
-      background: #D1FAE5;
-      color: #065F46;
-      display: block;
-    }
+    .msg-box.error { background: #FEE2E2; color: #991B1B; display: block; }
+    .msg-box.success { background: #D1FAE5; color: #065F46; display: block; }
   </style>
 </head>
 <body>
 
-  <!-- VOLTAR / LOGO -->
   <a href="index.html" class="header-logo">AgendAi.</a>
 
-  <!-- CARD PRINCIPAL -->
   <div class="auth-card">
     
-    <!-- ABAS -->
     <div class="tabs">
       <button type="button" class="tab-btn active" id="tabLogin" onclick="window.alternarAba('login')">Entrar</button>
       <button type="button" class="tab-btn" id="tabCadastro" onclick="window.alternarAba('cadastro')">Criar Conta</button>
     </div>
 
-    <!-- MENSAGENS DE ALERTA -->
     <div id="msgAlerta" class="msg-box"></div>
 
-    <!-- FORMULÁRIO DE LOGIN -->
+    <!-- LOGIN -->
     <div id="formLogin" class="form-container active">
       <div class="form-title">Bem-vindo de volta!</div>
-      <div class="form-subtitle">Digite seus dados para acessar o seu painel.</div>
+      <div class="form-subtitle">Digite seus dados para acessar o painel.</div>
       
       <form onsubmit="window.handleLogin(event)">
         <div class="form-group">
@@ -193,16 +172,12 @@
       </form>
     </div>
 
-    <!-- FORMULÁRIO DE CADASTRO (BAIXO ATRITO: SÓ NOME, E-MAIL E SENHA) -->
+    <!-- CADASTRO (SOMENTE E-MAIL E SENHA) -->
     <div id="formCadastro" class="form-container">
       <div class="form-title">Comece seus 30 Dias Grátis</div>
-      <div class="form-subtitle">Criação rápida. Sem cartão de crédito.</div>
+      <div class="form-subtitle">Apenas e-mail e senha. Sem cartão.</div>
       
       <form onsubmit="window.handleCadastro(event)">
-        <div class="form-group">
-          <label for="cadNome">Seu Nome</label>
-          <input type="text" id="cadNome" placeholder="Como podemos te chamar?" required>
-        </div>
         <div class="form-group">
           <label for="cadEmail">Seu melhor e-mail</label>
           <input type="email" id="cadEmail" placeholder="seu@email.com" required>
@@ -217,36 +192,32 @@
 
   </div>
 
-  <!-- SDK OFICIAL DO SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // 1. FUNÇÕES VISUAIS GLOBAIS
     window.alternarAba = function(modo) {
       window.exibirMensagem('', '');
-
       const tabLogin = document.getElementById('tabLogin');
       const tabCadastro = document.getElementById('tabCadastro');
       const formLogin = document.getElementById('formLogin');
       const formCadastro = document.getElementById('formCadastro');
 
       if (modo === 'cadastro') {
-        if (tabLogin) tabLogin.classList.remove('active');
-        if (tabCadastro) tabCadastro.classList.add('active');
-        if (formLogin) formLogin.classList.remove('active');
-        if (formCadastro) formCadastro.classList.add('active');
+        tabLogin.classList.remove('active');
+        tabCadastro.classList.add('active');
+        formLogin.classList.remove('active');
+        formCadastro.classList.add('active');
       } else {
-        if (tabCadastro) tabCadastro.classList.remove('active');
-        if (tabLogin) tabLogin.classList.add('active');
-        if (formCadastro) formCadastro.classList.remove('active');
-        if (formLogin) formLogin.classList.add('active');
+        tabCadastro.classList.remove('active');
+        tabLogin.classList.add('active');
+        formCadastro.classList.remove('active');
+        formLogin.classList.add('active');
       }
     };
 
     window.exibirMensagem = function(texto, tipo) {
       const msgBox = document.getElementById('msgAlerta');
       if (!msgBox) return;
-
       if (!texto) {
         msgBox.className = 'msg-box';
         msgBox.innerText = '';
@@ -263,7 +234,6 @@
       }
     });
 
-    // 2. CONFIGURAÇÃO DO SUPABASE
     const SUPABASE_URL = 'https://yhecaaajbgetcnfdcqxj.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFjYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
     
@@ -272,7 +242,6 @@
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // 3. PROCESSAR LOGIN
     window.handleLogin = async function(event) {
       event.preventDefault();
       window.exibirMensagem('', '');
@@ -300,14 +269,12 @@
       }
     };
 
-    // 4. PROCESSAR CADASTRO (BAIXO ATRITO)
     window.handleCadastro = async function(event) {
       event.preventDefault();
       window.exibirMensagem('', '');
 
       if (!supabaseClient) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
 
-      const nome = document.getElementById('cadNome').value;
       const email = document.getElementById('cadEmail').value;
       const password = document.getElementById('cadSenha').value;
       const btn = document.getElementById('btnCadastrarSubmit');
@@ -321,14 +288,14 @@
 
         const user = authData.user;
         if (user) {
-          // Salva o usuário essencial (garante o lead capturado pelo e-mail)
+          // Salva o lead na tabela usuários
           const { error: userTableError } = await supabaseClient.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
           if (userTableError) throw userTableError;
 
-          // Cria o registro inicial no assinante (com nome provisório para estabelecimento/whats que serão preenchidos no modal da home)
+          // Cria o registro padrão inicial (o onboarding na home vai preencher o WhatsApp e o nome real)
           const { error: assinanteError } = await supabaseClient.from('assinantes').insert([{
             usuario_id: user.id, 
-            nome: nome, 
+            nome: 'Pendente', 
             email_contato: email, 
             plano: 'basico', 
             status_assinatura: 'degustacao'
@@ -337,7 +304,7 @@
 
           window.exibirMensagem('Conta criada com sucesso!', 'success');
           
-          // Redireciona para o painel acionando o modal de onboarding
+          // Redireciona para a home ativando o modal de onboarding
           setTimeout(() => { window.location.href = 'home.html?onboarding=true'; }, 1000);
         }
       } catch (error) {
