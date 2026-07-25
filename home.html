@@ -376,13 +376,13 @@
         </div>
       </div>
 
-      <!-- AVISO DE PERFIL PENDENTE (EXIBIDO CASO NÃO TENHA NOME CADASTRADO) -->
+      <!-- AVISO DE PERFIL PENDENTE -->
       <div id="profileWarningBanner" class="profile-warning-banner" style="display: none;">
         <div class="profile-warning-content">
           <div class="profile-warning-icon">⚠️</div>
           <div>
             <div class="profile-warning-title">Finalize seu cadastro</div>
-            <div class="profile-warning-text">Assim que você for completar o seu perfil em <strong>Ajustes</strong>-><strong>Perfil do Usuário</strong>, será liberado o link para agendamento.</div>
+            <div class="profile-warning-text">Assim que você completar o seu perfil em <strong>Ajustes</strong> -> <strong>Perfil do Usuário</strong>, o link para agendamento será liberado.</div>
           </div>
         </div>
         <a href="ajustes.html" class="btn-complete-profile">Completar Perfil</a>
@@ -392,15 +392,15 @@
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-header">Atendimentos Hoje</div>
-          <div class="kpi-value">8</div>
+          <div class="kpi-value" id="kpiAtendimentos">0</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-header">Faturamento Previsto</div>
-          <div class="kpi-value gold">R$ 480</div>
+          <div class="kpi-value gold" id="kpiFaturamento">R$ 0</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-header">Taxa de Ocupação</div>
-          <div class="kpi-value">85%</div>
+          <div class="kpi-value" id="kpiOcupacao">0%</div>
         </div>
       </div>
 
@@ -410,18 +410,14 @@
           <h2 class="section-title">Próximos Clientes</h2>
           <p class="section-subtitle">Atendimentos de hoje em ordem cronológica</p>
           
-          <div class="timeline-list">
+          <div class="timeline-list" id="timelineList">
+            <!-- Dinâmico via Supabase -->
             <div class="client-card">
               <div class="client-info-wrapper">
-                <div class="client-time">09:00</div>
                 <div>
-                  <div class="client-name">Maria Silva</div>
-                  <div class="client-service">Corte & Design VIP</div>
+                  <div class="client-name" style="color: var(--text-muted);">Nenhum agendamento para hoje.</div>
                 </div>
               </div>
-              <button class="btn-wa-action" onclick="openWA('Maria Silva', '09:00', 'Corte & Design VIP')" title="Enviar lembrete">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-              </button>
             </div>
           </div>
         </div>
@@ -429,7 +425,7 @@
     </main>
   </div>
 
-  <button class="fab-add" onclick="alert('Modal de novo agendamento')">
+  <button class="fab-add" onclick="window.location.href='agenda.html'">
     <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
   </button>
 
@@ -440,8 +436,9 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let usuarioAtual = null;
+    let linkPublicoSlug = "";
 
-    // 2. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
+    // 2. GUARDA DE ROTA E BUSCA DE DADOS NO SUPABASE
     async function checarAutenticacao() {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
@@ -453,26 +450,47 @@
       usuarioAtual = session.user;
       atualizarDataAtual();
 
-      const nomeCadastrado = usuarioAtual.user_metadata?.display_name;
+      // Busca dados na tabela 'perfis' usando o id do usuário logado
+      const { data: perfil, error: perfilError } = await supabaseClient
+        .from('perfis')
+        .select('*')
+        .eq('id', usuarioAtual.id)
+        .single();
+
       const greetingTitle = document.getElementById('greetingTitle');
       const warningBanner = document.getElementById('profileWarningBanner');
+      const toggle = document.getElementById('agendaToggle');
+      const textStatus = document.getElementById('statusText');
 
-      if (nomeCadastrado) {
-        greetingTitle.innerText = `Olá, ${nomeCadastrado}! ✨`;
+      // Verifica se o perfil existe e tem um nome cadastrado
+      if (!perfilError && perfil && (perfil.nome || perfil.nome_completo || perfil.display_name)) {
+        const nomeUsuario = perfil.nome || perfil.nome_completo || perfil.display_name;
+        greetingTitle.innerText = `Olá, ${nomeUsuario}! ✨`;
         warningBanner.style.display = 'none';
+
+        // Salva o slug/link se existir na tabela
+        linkPublicoSlug = perfil.slug || perfil.username || usuarioAtual.id;
+
+        // Atualiza o estado da agenda (se houver coluna correspondente, ex: 'agenda_aberta' ou 'ativo')
+        if (perfil.agenda_aberta !== undefined) {
+          toggle.checked = perfil.agenda_aberta;
+          atualizarTextoStatus(perfil.agenda_aberta);
+        }
       } else {
         greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
         warningBanner.style.display = 'flex';
       }
+
+      // Opcional: Carregar dados adicionais (como métricas ou agendamentos)
+      carregarDadosDashboard(usuarioAtual.id);
     }
 
-    // 3. FUNÇÕES UTILITÁRIAS
+    // 3. FUNÇÕES UTILITÁRIAS E DE INTERAÇÃO
     function atualizarDataAtual() {
       const hoje = new Date();
       const opcoes = { weekday: 'long', day: 'numeric', month: 'long' };
       let dataFormatada = hoje.toLocaleDateString('pt-BR', opcoes);
       dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
-      
       document.getElementById('greetingDate').innerText = dataFormatada;
     }
 
@@ -481,10 +499,28 @@
       window.location.href = "login.html";
     }
 
-    function toggleAgenda() {
+    async function toggleAgenda() {
       const toggle = document.getElementById('agendaToggle');
+      const isOpen = toggle.checked;
+      atualizarTextoStatus(isOpen);
+
+      // Salva o estado no Supabase na tabela 'perfis'
+      const { error } = await supabaseClient
+        .from('perfis')
+        .update({ agenda_aberta: isOpen })
+        .eq('id', usuarioAtual.id);
+
+      if (error) {
+        console.error("Erro ao atualizar status da agenda:", error.message);
+        exibirToast("Erro ao salvar status da agenda ❌");
+      } else {
+        exibirToast(isOpen ? "Agenda aberta com sucesso! ✅" : "Agenda pausada. ⏸️");
+      }
+    }
+
+    function atualizarTextoStatus(isOpen) {
       const text = document.getElementById('statusText');
-      if(toggle.checked) {
+      if (isOpen) {
         text.innerText = "Aberta";
         text.style.color = "var(--status-online)";
       } else {
@@ -494,8 +530,8 @@
     }
 
     function copyLink() {
-      const fakeLink = "https://agend.ai/studiodezzinha";
-      navigator.clipboard.writeText(fakeLink).then(() => {
+      const linkFinal = `https://agend.ai/${linkPublicoSlug || usuarioAtual.id}`;
+      navigator.clipboard.writeText(linkFinal).then(() => {
         exibirToast("Link copiado com sucesso! ✅");
       });
     }
@@ -513,7 +549,26 @@
       setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // Inicializa a verificação de autenticação
+    // Exemplo de função para buscar agendamentos reais (caso possua uma tabela de agendamentos)
+    async function carregarDadosDashboard(userId) {
+      try {
+        // Exemplo: se houver uma tabela chamada 'agendamentos' com coluna 'usuario_id'
+        /*
+        const { data: agendamentos, error } = await supabaseClient
+          .from('agendamentos')
+          .select('*')
+          .eq('usuario_id', userId);
+
+        if (!error && agendamentos) {
+          // Atualize os KPIs e a Timeline aqui com os dados reais do banco
+        }
+        */
+      } catch (err) {
+        console.error("Erro ao carregar dados do dashboard:", err);
+      }
+    }
+
+    // Inicializa a verificação ao carregar a página
     checarAutenticacao();
   </script>
 </body>
