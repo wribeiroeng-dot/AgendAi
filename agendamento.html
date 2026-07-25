@@ -10,13 +10,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
-      /* Paleta Azul Marinho Luxo & Dourado */
       --bg: #0b132b;
       --card-bg: #1c2541;
       --card-border: rgba(212, 175, 55, 0.2);
-      --accent: #d4af37; /* Dourado Champagne */
+      --accent: #d4af37;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --input-bg: #0f172a;
@@ -48,7 +50,6 @@
       gap: 18px;
     }
 
-    /* 🏢 CABEÇALHO COMPACTO */
     .header-top {
       display: flex;
       align-items: center;
@@ -83,29 +84,10 @@
       flex-shrink: 0;
     }
 
-    .business-details {
-      display: flex;
-      flex-direction: column;
-    }
+    .business-details { display: flex; flex-direction: column; }
+    .business-name { font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; line-height: 1.2; }
+    .business-category { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-    .business-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.3px;
-      line-height: 1.2;
-    }
-
-    .business-category {
-      font-size: 11px;
-      color: var(--accent);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-
-    /* 🟢 BADGE STATUS ONLINE COMPACTO */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -123,12 +105,8 @@
     }
 
     .badge-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--status-online);
-      border-radius: 50%;
-      box-shadow: 0 0 6px var(--status-online);
-      animation: pulse 2s infinite;
+      width: 6px; height: 6px; background: var(--status-online); border-radius: 50%;
+      box-shadow: 0 0 6px var(--status-online); animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
@@ -137,246 +115,89 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
     }
 
-    .section-label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
+    .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
 
-    /* 🎡 CILINDRO 3D DE SERVIÇOS (HORIZONTAL) */
     .cylinder-stage {
-      width: 100%;
-      height: 160px;
-      perspective: 900px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      touch-action: pan-y;
-      overflow: hidden;
-      border-radius: 20px;
-      background: rgba(15, 23, 42, 0.4);
-      border: 1px solid var(--card-border);
+      width: 100%; height: 160px; perspective: 900px; position: relative;
+      display: flex; align-items: center; justify-content: center; user-select: none;
+      touch-action: pan-y; overflow: hidden; border-radius: 20px;
+      background: rgba(15, 23, 42, 0.4); border: 1px solid var(--card-border);
     }
 
-    .cylinder-spinner {
-      width: 200px;
-      height: 120px;
-      position: absolute;
-      transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.15, 0.85, 0.35, 1.2);
-    }
-
-    .cylinder-spinner.dragging {
-      transition: none;
-    }
+    .cylinder-spinner { width: 200px; height: 120px; position: absolute; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.15, 0.85, 0.35, 1.2); }
+    .cylinder-spinner.dragging { transition: none; }
 
     .service-card-3d {
-      position: absolute;
-      width: 200px;
-      height: 125px;
-      background: var(--input-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      backface-visibility: hidden;
-      opacity: 0.35;
-      transition: opacity 0.4s, border-color 0.4s, box-shadow 0.4s, background 0.4s;
-      cursor: pointer;
+      position: absolute; width: 200px; height: 125px; background: var(--input-bg);
+      border: 1px solid var(--card-border); border-radius: 16px; padding: 12px 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      backface-visibility: hidden; opacity: 0.35;
+      transition: opacity 0.4s, border-color 0.4s, box-shadow 0.4s, background 0.4s; cursor: pointer;
     }
 
-    .service-card-3d.active {
-      opacity: 1;
-      border-color: var(--accent);
-      background: rgba(28, 37, 65, 0.95);
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
-    }
+    .service-card-3d.active { opacity: 1; border-color: var(--accent); background: rgba(28, 37, 65, 0.95); box-shadow: 0 0 20px rgba(212, 175, 55, 0.35); }
 
-    .card-3d-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
+    .card-3d-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .card-3d-duration { font-size: 11px; color: var(--text-muted); }
     .card-3d-price { font-size: 14px; font-weight: 700; color: var(--text-main); }
 
-    /* CONTROLES DE QUANTIDADE (+/-) */
     .qty-add-btn {
-      width: 100%;
-      background: rgba(212, 175, 55, 0.1);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      border-radius: 8px;
-      padding: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
+      width: 100%; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 8px; padding: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
     }
     .qty-add-btn:hover { background: var(--accent); color: #0b132b; }
 
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--accent);
-      border-radius: 8px;
-      padding: 2px;
-    }
-    .qty-btn {
-      background: none;
-      border: none;
-      color: #0b132b;
-      font-size: 16px;
-      font-weight: 700;
-      width: 30px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .qty-value {
-      color: #0b132b;
-      font-size: 13px;
-      font-weight: 800;
-    }
+    .qty-controls { display: flex; align-items: center; justify-content: space-between; background: var(--accent); border-radius: 8px; padding: 2px; }
+    .qty-btn { background: none; border: none; color: #0b132b; font-size: 16px; font-weight: 700; width: 30px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .qty-value { color: #0b132b; font-size: 13px; font-weight: 800; }
 
-    /* Controles de Seta do Cilindro */
     .cylinder-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      background: rgba(11, 19, 43, 0.8);
-      border: 1px solid var(--card-border);
-      border-radius: 50%;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      cursor: pointer;
-      z-index: 10;
-      transition: all 0.2s;
+      position: absolute; top: 50%; transform: translateY(-50%); width: 32px; height: 32px;
+      background: rgba(11, 19, 43, 0.8); border: 1px solid var(--card-border); border-radius: 50%;
+      color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; z-index: 10; transition: all 0.2s;
     }
     .cylinder-nav:hover { background: var(--accent); color: #0b132b; }
     .cylinder-nav.left { left: 8px; }
     .cylinder-nav.right { right: 8px; }
 
-    /* RESUMO DO PEDIDO */
     .booking-summary {
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px dashed var(--status-online);
-      color: var(--text-main);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: -6px;
-      display: none;
+      background: rgba(34, 197, 94, 0.1); border: 1px dashed var(--status-online); color: var(--text-main);
+      padding: 10px 14px; border-radius: 12px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: -6px; display: none;
     }
     .booking-summary.visible { display: flex; }
     .summary-highlight { color: var(--status-online); font-weight: 700; }
 
-    /* CARROSSEL DE DATAS */
-    .date-scroller {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--card-border) transparent;
-      cursor: grab;
-      user-select: none;
-    }
+    .date-scroller { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; scrollbar-color: var(--card-border) transparent; cursor: grab; user-select: none; }
     .date-scroller:active { cursor: grabbing; }
 
     .date-card {
-      min-width: 64px;
-      padding: 12px 6px;
-      background: var(--input-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
+      min-width: 64px; padding: 12px 6px; background: var(--input-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; text-align: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
     }
     .date-card.active { border-color: var(--accent); background: var(--accent); color: #000; }
     .date-card .day-name { font-size: 11px; font-weight: 600; text-transform: uppercase; opacity: 0.8; }
     .date-card .day-num { font-size: 17px; font-weight: 700; margin-top: 2px; }
 
-    /* MINIATURA DE CALENDÁRIO */
     .calendar-picker-card {
-      min-width: 64px;
-      padding: 10px 4px;
-      background: rgba(212, 175, 55, 0.1);
-      border: 1px dashed var(--accent);
-      border-radius: 14px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
+      min-width: 64px; padding: 10px 4px; background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--accent);
+      border-radius: 14px; text-align: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--accent);
     }
     .calendar-picker-card.active { border-color: var(--accent); background: var(--accent); color: #000; }
     .calendar-picker-card.active svg { fill: #000; }
     .calendar-picker-card svg { width: 20px; height: 20px; fill: currentColor; pointer-events: none; }
     .calendar-picker-label { font-size: 10px; font-weight: 600; text-transform: uppercase; margin-top: 2px; pointer-events: none; }
     
-    #hiddenDatePicker {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      opacity: 0;
-      cursor: pointer;
-      z-index: 5;
-    }
+    #hiddenDatePicker { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
 
-    /* Horários */
     .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .time-chip {
-      background: var(--input-bg);
-      border: 1px solid var(--card-border);
-      padding: 10px 4px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      cursor: pointer;
-      transition: all 0.2s ease;
+      background: var(--input-bg); border: 1px solid var(--card-border); padding: 10px 4px; border-radius: 12px;
+      text-align: center; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s ease;
     }
     .time-chip.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
 
-    /* Form */
     .input-group { display: flex; flex-direction: column; gap: 10px; }
     .custom-input {
       width: 100%; background: var(--input-bg); border: 1px solid var(--card-border);
@@ -391,161 +212,79 @@
     }
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    /* BOTÃO WHATSAPP */
     .btn-whatsapp {
-      width: 100%;
-      background: rgba(212, 175, 55, 0.1);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      margin-top: 4px;
+      width: 100%; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent); color: var(--accent);
+      font-size: 14px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 4px;
     }
-    .btn-whatsapp:hover {
-      background: var(--accent);
-      color: #0b132b;
-    }
+    .btn-whatsapp:hover { background: var(--accent); color: #0b132b; }
 
-    /* MODAL DE ENDEREÇO */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(11, 19, 43, 0.85);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      padding: 20px;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 19, 43, 0.85);
+      backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px;
     }
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
     .modal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--accent);
-      border-radius: 20px;
-      padding: 24px;
-      width: 100%;
-      max-width: 340px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
+      background: var(--card-bg); border: 1px solid var(--accent); border-radius: 20px; padding: 24px;
+      width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 16px; text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); transform: translateY(20px); transition: transform 0.3s ease;
     }
-    .modal-overlay.open .modal-card {
-      transform: translateY(0);
-    }
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .modal-address {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+    .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
+    .modal-address { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .modal-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .btn-map {
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background 0.2s;
+      background: rgba(212, 175, 55, 0.15); border: 1px solid var(--accent); color: var(--accent);
+      padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;
     }
     .btn-map:hover { background: var(--accent); color: #0b132b; }
     .btn-close-modal {
-      background: transparent;
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 4px;
+      background: transparent; border: 1px solid var(--card-border); color: var(--text-muted);
+      padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px;
     }
     .btn-close-modal:hover { color: var(--text-main); border-color: var(--text-muted); }
-
   </style>
 </head>
 <body>
 
   <div class="app-container">
     
-    <!-- CABEÇALHO COMPACTO -->
     <div class="header-top">
       <div class="business-profile-compact" onclick="toggleModal(true)" title="Ver endereço e localização">
-        <div class="business-logo">SD</div>
+        <div class="business-logo" id="businessLogo">...</div>
         <div class="business-details">
-          <h1 class="business-name">Studio Dezzinha</h1>
-          <p class="business-category">Estética & Beleza</p>
+          <h1 class="business-name" id="businessName">Carregando...</h1>
+          <p class="business-category">Agendamento Online</p>
         </div>
       </div>
       <div class="badge"><span class="badge-dot"></span> Online</div>
     </div>
 
-    <!-- 1. SERVIÇOS -->
     <div>
       <div class="section-label">1. Selecione os Serviços</div>
-      
       <div class="cylinder-stage" id="cylinderStage">
         <button class="cylinder-nav left" onclick="rotateCylinderNav(-1)">◀</button>
         <button class="cylinder-nav right" onclick="rotateCylinderNav(1)">▶</button>
-
-        <div class="cylinder-spinner" id="cylinderSpinner">
-          <!-- Renderizado via JS -->
-        </div>
+        <div class="cylinder-spinner" id="cylinderSpinner"></div>
       </div>
     </div>
 
-    <!-- RESUMO DO PEDIDO -->
     <div id="bookingSummary" class="booking-summary">
       <div>Serviços: <span id="sumQty" class="summary-highlight">0</span></div>
       <div>Tempo: <span id="sumTime" class="summary-highlight">0 min</span></div>
       <div>Total: <span id="sumPrice" class="summary-highlight">R$ 0</span></div>
     </div>
 
-    <!-- 2. DATAS -->
     <div>
       <div class="section-label">2. Escolha a Data</div>
       <div class="date-scroller" id="dateScroller"></div>
     </div>
 
-    <!-- 3. HORÁRIOS -->
     <div>
       <div class="section-label">3. Horário Inicial</div>
-      <div class="time-grid">
+      <div class="time-grid" id="timeGrid">
         <div class="time-chip" onclick="selectTime(this)">09:00</div>
         <div class="time-chip" onclick="selectTime(this)">10:30</div>
         <div class="time-chip" onclick="selectTime(this)">14:00</div>
@@ -553,7 +292,6 @@
       </div>
     </div>
 
-    <!-- 4. DADOS -->
     <div>
       <div class="section-label">4. Seus Dados</div>
       <div class="input-group">
@@ -564,77 +302,147 @@
 
     <button id="btnSubmit" class="btn-primary" disabled onclick="submitBooking()">Confirmar Agendamento</button>
     
-    <a href="https://wa.me/5531999999999?text=Olá,%20gostaria%20de%20tirar%20uma%20dúvida%20sobre%20os%20agendamentos." target="_blank" class="btn-whatsapp">
+    <a id="btnWhatsAppStore" href="#" target="_blank" class="btn-whatsapp" style="display:none;">
       <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
       Dúvidas? Fale conosco no WhatsApp
     </a>
   </div>
 
-  <!-- MODAL DE LOCALIZAÇÃO -->
   <div class="modal-overlay" id="locationModal" onclick="handleModalClick(event)">
     <div class="modal-card">
-      <div class="modal-title">Studio Dezzinha</div>
-      <div class="modal-address">
-        📍 Rua Exemplo, 420 - Centro<br>Belo Horizonte - MG
+      <div class="modal-title" id="modalEstabelecimentoNome">Estabelecimento</div>
+      <div class="modal-address" id="modalEstabelecimentoEndereco">
+        Carregando endereço...
       </div>
       <div class="modal-buttons">
-        <a href="https://maps.google.com/?q=Studio+Dezzinha+Belo+Horizonte" target="_blank" class="btn-map">
-          🗺️ Abrir no Google Maps
-        </a>
-        <a href="https://waze.com/ul?q=Studio+Dezzinha+Belo+Horizonte" target="_blank" class="btn-map">
-          🚗 Abrir no Waze
-        </a>
+        <a id="linkGoogleMaps" href="#" target="_blank" class="btn-map">🗺️ Abrir no Google Maps</a>
         <button class="btn-close-modal" onclick="toggleModal(false)">Fechar</button>
       </div>
     </div>
   </div>
 
   <script>
-    const servicesList = [
-      { id: 0, name: 'Corte & Design VIP', duration: 45, price: 80, qty: 0 },
-      { id: 1, name: 'Tratamento Completo', duration: 60, price: 120, qty: 0 },
-      { id: 2, name: 'Escova & Modelagem', duration: 40, price: 65, qty: 0 },
-      { id: 3, name: 'Design de Sobrancelha', duration: 30, price: 50, qty: 0 },
-      { id: 4, name: 'Pedicure Luxo', duration: 50, price: 75, qty: 0 },
-      { id: 5, name: 'Coloração Premium', duration: 90, price: 180, qty: 0 }
-    ];
+    // ⚙️ COLOQUE AQUI AS SUAS CREDENCIAIS DO SUPABASE
+    const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
+    const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let servicesList = [];
+    let estabelecimentoId = null;
     let selectedDate = null;
     let selectedTime = null;
     let globalMinDate = '';
 
-    const angleStep = 360 / servicesList.length; 
+    let angleStep = 0; 
     const radius = 190; 
     let currentRotation = 0;
     let activeServiceIndex = 0;
 
-    window.onload = function() {
+    window.onload = async function() {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       globalMinDate = tomorrow.toISOString().split('T')[0];
 
-      init3DCylinder();
       renderDateScroller();
+
+      // Pega o nome do estabelecimento passado na URL (?u=Nome%20Da%20Loja)
+      const urlParams = new URLSearchParams(window.location.search);
+      const nomeUrl = urlParams.get('u');
+
+      if (!nomeUrl) {
+        alert("Nenhum estabelecimento informado no link.");
+        document.getElementById('businessName').innerText = "Link Inválido";
+        return;
+      }
+
+      await carregarDadosDoBanco(nomeUrl);
     };
 
-    function toggleModal(open) {
-      const modal = document.getElementById('locationModal');
-      if (open) {
-        modal.classList.add('open');
-      } else {
-        modal.classList.remove('open');
+    async function carregarDadosDoBanco(nomeParam) {
+      try {
+        const nomeDecodificado = decodeURIComponent(nomeParam);
+
+        // 1. Busca o estabelecimento pelo nome na tabela 'estabelecimentos'
+        const { data: estab, error: errEstab } = await supabaseClient
+          .from('estabelecimentos')
+          .select('*')
+          .ilike('nome', nomeDecodificado)
+          .single();
+
+        if (errEstab || !estab) {
+          console.error(errEstab);
+          document.getElementById('businessName').innerText = "Não encontrado";
+          alert("Estabelecimento não encontrado.");
+          return;
+        }
+
+        estabelecimentoId = estab.id;
+
+        // Preenche o Cabeçalho
+        document.getElementById('businessName').innerText = estab.nome;
+        document.getElementById('businessLogo').innerText = estab.nome.slice(0, 2).toUpperCase();
+        
+        // Preenche o Modal de Endereço
+        document.getElementById('modalEstabelecimentoNome').innerText = estab.nome;
+        const enderecoCompleto = `${estab.logradouro || ''}, ${estab.numero || 'S/N'} - ${estab.bairro || ''}, ${estab.cidade || ''} - ${estab.estado || ''}`;
+        document.getElementById('modalEstabelecimentoEndereco').innerText = `📍 ${enderecoCompleto}`;
+        
+        // Link Google Maps
+        const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(estab.nome + ' ' + enderecoCompleto)}`;
+        document.getElementById('linkGoogleMaps').href = mapsUrl;
+
+        // Botão WhatsApp flutuante se houver telefone
+        if (estab.telefone) {
+          const btnWp = document.getElementById('btnWhatsAppStore');
+          btnWp.href = `https://wa.me/55${estab.telefone.replace(/\D/g, '')}?text=Olá,%20gostaria%20de%20tirar%20uma%20dúvida%20sobre%20os%20agendamentos.`;
+          btnWp.style.display = 'flex';
+        }
+
+        // 2. Busca os serviços reais da tabela 'servicos' deste estabelecimento
+        const { data: servicosDb, error: errServ } = await supabaseClient
+          .from('servicos')
+          .select('*')
+          .eq('estabelecimento_id', estabelecimentoId)
+          .eq('ativo', true);
+
+        if (errServ) {
+          console.error("Erro ao buscar serviços:", errServ);
+          return;
+        }
+
+        if (servicosDb && servicosDb.length > 0) {
+          servicesList = servicosDb.map(s => ({
+            id: s.id,
+            name: s.nome,
+            duration: s.duracao_minutos,
+            price: Number(s.preco),
+            qty: 0
+          }));
+        } else {
+          servicesList = [];
+        }
+
+        angleStep = servicesList.length > 0 ? (360 / servicesList.length) : 360;
+        init3DCylinder();
+        updateSummary();
+
+      } catch (err) {
+        console.error("Erro geral:", err);
       }
     }
 
+    function toggleModal(open) {
+      const modal = document.getElementById('locationModal');
+      if (open) modal.classList.add('open');
+      else modal.classList.remove('open');
+    }
+
     function handleModalClick(event) {
-      if (event.target === document.getElementById('locationModal')) {
-        toggleModal(false);
-      }
+      if (event.target === document.getElementById('locationModal')) toggleModal(false);
     }
 
     function renderCardHTML(index) {
       const serv = servicesList[index];
-      
       let actionHTML = '';
       if (serv.qty === 0) {
         actionHTML = `<button class="qty-add-btn" onclick="updateQty(${index}, 1, event)">+ Adicionar</button>`;
@@ -653,7 +461,7 @@
           <div class="card-3d-title">${serv.name}</div>
           <div class="card-info">
             <span class="card-3d-duration">⏱️ ${serv.duration} min</span>
-            <span class="card-3d-price">R$ ${serv.price}</span>
+            <span class="card-3d-price">R$ ${serv.price.toFixed(2)}</span>
           </div>
         </div>
         <div>${actionHTML}</div>
@@ -663,6 +471,11 @@
     function init3DCylinder() {
       const spinner = document.getElementById('cylinderSpinner');
       spinner.innerHTML = '';
+
+      if (servicesList.length === 0) {
+        spinner.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding-top:40px; font-size:13px;">Nenhum serviço cadastrado.</div>';
+        return;
+      }
 
       servicesList.forEach((serv, i) => {
         const cardAngle = i * angleStep;
@@ -682,36 +495,26 @@
 
     function updateQty(index, delta, event) {
       event.stopPropagation();
-      
       servicesList[index].qty += delta;
       if (servicesList[index].qty < 0) servicesList[index].qty = 0;
       
       const card = document.querySelector(`.service-card-3d[data-index="${index}"]`);
-      if (card) {
-        card.innerHTML = renderCardHTML(index);
-      }
+      if (card) card.innerHTML = renderCardHTML(index);
       
       updateSummary();
       validateForm();
     }
 
     function formatTotalTime(totalMinutes) {
-      if (totalMinutes < 60) {
-        return totalMinutes + ' min';
-      }
+      if (totalMinutes < 60) return totalMinutes + ' min';
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
-      if (minutes === 0) {
-        return hours + (hours === 1 ? ' hora' : ' horas');
-      }
+      if (minutes === 0) return hours + (hours === 1 ? ' hora' : ' horas');
       return `${hours}h ${minutes} min`;
     }
 
     function updateSummary() {
-      let totalQty = 0;
-      let totalTime = 0;
-      let totalPrice = 0;
-
+      let totalQty = 0, totalTime = 0, totalPrice = 0;
       servicesList.forEach(s => {
         if (s.qty > 0) {
           totalQty += s.qty;
@@ -725,13 +528,14 @@
         summaryDiv.classList.add('visible');
         document.getElementById('sumQty').innerText = totalQty;
         document.getElementById('sumTime').innerText = formatTotalTime(totalTime);
-        document.getElementById('sumPrice').innerText = 'R$ ' + totalPrice;
+        document.getElementById('sumPrice').innerText = 'R$ ' + totalPrice.toFixed(2);
       } else {
         summaryDiv.classList.remove('visible');
       }
     }
 
     function rotateToCardIndex(index) {
+      if(servicesList.length === 0) return;
       activeServiceIndex = (index % servicesList.length + servicesList.length) % servicesList.length;
       currentRotation = -activeServiceIndex * angleStep;
       
@@ -745,9 +549,7 @@
       });
     }
 
-    function rotateCylinderNav(direction) {
-      rotateToCardIndex(activeServiceIndex + direction);
-    }
+    function rotateCylinderNav(direction) { rotateToCardIndex(activeServiceIndex + direction); }
 
     function enableCylinderDrag() {
       const stage = document.getElementById('cylinderStage');
@@ -764,8 +566,7 @@
       function onMove(e) {
         if (!isDragging) return;
         const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const deltaX = currentX - startX;
-        currentRotation = startRotation + (deltaX * 0.45);
+        currentRotation = startRotation + ((currentX - startX) * 0.45);
         spinner.style.transform = `rotateY(${currentRotation}deg)`;
       }
 
@@ -773,8 +574,7 @@
         if (!isDragging) return;
         isDragging = false;
         spinner.classList.remove('dragging');
-        let nearestIndex = Math.round(-currentRotation / angleStep);
-        rotateToCardIndex(nearestIndex);
+        rotateToCardIndex(Math.round(-currentRotation / angleStep));
       }
 
       stage.addEventListener('mousedown', onStart);
@@ -808,16 +608,12 @@
         scroller.appendChild(card);
       }
 
-      // Cartão de calendário miniatura compatível com desktop e mobile
       const pickerCard = document.createElement('div');
       pickerCard.className = 'calendar-picker-card';
       pickerCard.onclick = function() {
         const picker = document.getElementById('hiddenDatePicker');
-        if (typeof picker.showPicker === 'function') {
-          try { picker.showPicker(); } catch (err) { picker.click(); }
-        } else {
-          picker.click();
-        }
+        if (typeof picker.showPicker === 'function') { try { picker.showPicker(); } catch (err) { picker.click(); } }
+        else { picker.click(); }
       };
       pickerCard.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
@@ -831,11 +627,8 @@
       const val = event.target.value;
       if (!val) return;
       selectedDate = val;
-
       document.querySelectorAll('.date-card').forEach(c => c.classList.remove('active'));
-      const pickerCard = document.querySelector('.calendar-picker-card');
-      pickerCard.classList.add('active');
-
+      document.querySelector('.calendar-picker-card').classList.add('active');
       validateForm();
     }
 
@@ -862,7 +655,6 @@
       const name = document.getElementById('clientName').value.trim();
       const phoneRaw = document.getElementById('clientPhone').value.replace(/\D/g, '');
       const btn = document.getElementById('btnSubmit');
-      
       const hasService = servicesList.some(s => s.qty > 0);
 
       if (hasService && selectedDate && selectedTime && name.length > 2 && phoneRaw.length >= 10) {
@@ -872,22 +664,95 @@
       }
     }
 
-    function submitBooking() {
-      const name = document.getElementById('clientName').value;
+    // 🚀 LÓGICA DE SALVAR O AGENDAMENTO NO SUPABASE
+    async function submitBooking() {
+      const name = document.getElementById('clientName').value.trim();
+      const phone = document.getElementById('clientPhone').value.trim();
       
-      let servicosEscolhidos = '';
+      let servicosSelecionados = [];
       let tempoTotal = 0;
       let valorTotal = 0;
 
       servicesList.forEach(s => {
         if(s.qty > 0) {
-          servicosEscolhidos += `\n- ${s.qty}x ${s.name}`;
           tempoTotal += (s.duration * s.qty);
           valorTotal += (s.price * s.qty);
+          servicosSelecionados.push({ id: s.id, nome: s.name, quantidade: s.qty, preco: s.price });
         }
       });
 
-      alert(`✨ Agendamento Solicitado!\n\nCliente: ${name}\nData: ${selectedDate} às ${selectedTime}\n\nServiços:${servicosEscolhidos}\n\nTempo Contínuo Reservado: ${formatTotalTime(tempoTotal)}\nValor Total: R$ ${valorTotal}`);
+      try {
+        // 1. Verifica ou cria o cliente final na tabela 'clientes_finais'
+        let clienteId = null;
+        const { data: clienteBusca } = await supabaseClient
+          .from('clientes_finais')
+          .select('id')
+          .eq('estabelecimento_id', estabelecimentoId)
+          .eq('telefone', phone)
+          .maybeSingle();
+
+        if (clienteBusca) {
+          clienteId = clienteBusca.id;
+        } else {
+          // Pega o assinante_id do estabelecimento para salvar o cliente final
+          const { data: estabInfo } = await supabaseClient
+            .from('estabelecimentos')
+            .select('assinante_id')
+            .eq('id', estabelecimentoId)
+            .single();
+
+          const { data: novoCliente, errCli } = await supabaseClient
+            .from('clientes_finais')
+            .insert([{
+              assinante_id: estabInfo.assinante_id,
+              nome: name,
+              telefone: phone
+            }])
+            .select()
+            .single();
+
+          if (errCli) throw errCli;
+          clienteId = novoCliente.id;
+        }
+
+        // 2. Busca o primeiro profissional disponível do estabelecimento para vincular o agendamento
+        const { data: profs } = await supabaseClient
+          .from('profissionais')
+          .select('id')
+          .eq('estabelecimento_id', estabelecimentoId)
+          .limit(1);
+
+        const profissionalId = (profs && profs.length > 0) ? profs[0].id : null;
+
+        if (!profissionalId) {
+          alert("Erro: Nenhum profissional cadastrado neste estabelecimento para receber o agendamento.");
+          return;
+        }
+
+        // 3. Salva na tabela 'agendamentos'
+        const { error: errAgend } = await supabaseClient
+          .from('agendamentos')
+          .insert([{
+            estabelecimento_id: estabelecimentoId,
+            profissional_id: profissionalId,
+            cliente_final_id: clienteId,
+            data_agendamento: selectedDate,
+            horario_inicio: selectedTime + ':00',
+            duracao_total_minutos: tempoTotal,
+            valor_total: valorTotal,
+            servicos_solicitados: servicosSelecionados,
+            status: 'pendente'
+          }]);
+
+        if (errAgend) throw errAgend;
+
+        alert(`✨ Agendamento Realizado com Sucesso!\n\nData: ${selectedDate} às ${selectedTime}\nValor Total: R$ ${valorTotal.toFixed(2)}`);
+        location.reload();
+
+      } catch (err) {
+        console.error("Erro ao salvar agendamento:", err);
+        alert("Ocorreu um erro ao concluir o agendamento. Tente novamente.");
+      }
     }
   </script>
 </body>
