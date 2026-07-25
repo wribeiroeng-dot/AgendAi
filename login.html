@@ -199,10 +199,22 @@
       <div class="form-subtitle">Crie sua conta em menos de 1 minuto. Sem cartão.</div>
       
       <form onsubmit="window.handleCadastro(event)">
+        <!-- NOVOS CAMPOS AQUI -->
+        <div class="form-group">
+          <label for="cadNome">Nome Completo</label>
+          <input type="text" id="cadNome" placeholder="Seu nome" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="cadWhatsapp">WhatsApp</label>
+          <input type="tel" id="cadWhatsapp" placeholder="(31) 99999-9999" required>
+        </div>
+
         <div class="form-group">
           <label for="cadEmail">Seu melhor e-mail</label>
           <input type="email" id="cadEmail" placeholder="seu@email.com" required>
         </div>
+        
         <div class="form-group">
           <label for="cadSenha">Crie uma senha</label>
           <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" minlength="6" required>
@@ -304,6 +316,9 @@
 
       if (!supabaseClient) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
 
+      // Pegando todos os valores do formulário
+      const nome = document.getElementById('cadNome').value;
+      const whatsapp = document.getElementById('cadWhatsapp').value;
       const email = document.getElementById('cadEmail').value;
       const password = document.getElementById('cadSenha').value;
       const btn = document.getElementById('btnCadastrarSubmit');
@@ -317,11 +332,20 @@
 
         const user = authData.user;
         if (user) {
-          const { error: userTableError } = await supabaseClient.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
+          // Insere na tabela usuários
+          const { error: userTableError } = await supabaseClient.from('usuarios').insert([
+            { id: user.id, email: user.email, perfil: 'assinante' }
+          ]);
           if (userTableError) throw userTableError;
 
+          // Insere na tabela assinantes com os dados reais
           const { error: assinanteError } = await supabaseClient.from('assinantes').insert([{
-            usuario_id: user.id, nome: 'Novo Assinante', email_contato: user.email, plano: 'basico', status_assinatura: 'degustacao'
+            usuario_id: user.id, 
+            nome: nome, 
+            telefone: whatsapp, // Certifique-se de que a coluna se chama 'telefone' ou 'whatsapp' no seu Supabase
+            email_contato: email, 
+            plano: 'basico', 
+            status_assinatura: 'degustacao'
           }]);
           if (assinanteError) throw assinanteError;
 
