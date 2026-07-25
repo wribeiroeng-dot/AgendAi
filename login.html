@@ -260,13 +260,13 @@
       }
     });
 
-    // 2. CONFIGURAÇÃO DO SUPABASE
+    // 2. CONFIGURAÇÃO DO SUPABASE (Mudamos 'supabase' para 'supabaseClient' para evitar conflito)
     const SUPABASE_URL = 'https://yhecaaajbgetcnfdcqxj.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFqYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
     
-    let supabase;
+    let supabaseClient;
     if (window.supabase) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
     // 3. PROCESSAR LOGIN
@@ -274,7 +274,7 @@
       event.preventDefault();
       window.exibirMensagem('', '');
 
-      if (!supabase) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
+      if (!supabaseClient) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
 
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginSenha').value;
@@ -284,7 +284,7 @@
         btn.disabled = true;
         btn.innerText = 'Entrando...';
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
         window.exibirMensagem('Login realizado com sucesso! Redirecionando...', 'success');
@@ -302,7 +302,7 @@
       event.preventDefault();
       window.exibirMensagem('', '');
 
-      if (!supabase) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
+      if (!supabaseClient) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
 
       const email = document.getElementById('cadEmail').value;
       const password = document.getElementById('cadSenha').value;
@@ -312,15 +312,15 @@
         btn.disabled = true;
         btn.innerText = 'Criando sua conta...';
 
-        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({ email, password });
         if (authError) throw authError;
 
         const user = authData.user;
         if (user) {
-          const { error: userTableError } = await supabase.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
+          const { error: userTableError } = await supabaseClient.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
           if (userTableError) throw userTableError;
 
-          const { error: assinanteError } = await supabase.from('assinantes').insert([{
+          const { error: assinanteError } = await supabaseClient.from('assinantes').insert([{
             usuario_id: user.id, nome: 'Novo Assinante', email_contato: user.email, plano: 'basico', status_assinatura: 'degustacao'
           }]);
           if (assinanteError) throw assinanteError;
