@@ -193,28 +193,20 @@
       </form>
     </div>
 
-    <!-- FORMULÁRIO DE CADASTRO (30 DIAS GRÁTIS) -->
+    <!-- FORMULÁRIO DE CADASTRO (BAIXO ATRITO: SÓ NOME, E-MAIL E SENHA) -->
     <div id="formCadastro" class="form-container">
       <div class="form-title">Comece seus 30 Dias Grátis</div>
-      <div class="form-subtitle">Crie sua conta em menos de 1 minuto. Sem cartão.</div>
+      <div class="form-subtitle">Criação rápida. Sem cartão de crédito.</div>
       
       <form onsubmit="window.handleCadastro(event)">
-        <!-- NOVOS CAMPOS AQUI -->
         <div class="form-group">
-          <label for="cadNome">Nome Completo</label>
-          <input type="text" id="cadNome" placeholder="Seu nome" required>
+          <label for="cadNome">Seu Nome</label>
+          <input type="text" id="cadNome" placeholder="Como podemos te chamar?" required>
         </div>
-        
-        <div class="form-group">
-          <label for="cadWhatsapp">WhatsApp</label>
-          <input type="tel" id="cadWhatsapp" placeholder="(31) 99999-9999" required>
-        </div>
-
         <div class="form-group">
           <label for="cadEmail">Seu melhor e-mail</label>
           <input type="email" id="cadEmail" placeholder="seu@email.com" required>
         </div>
-        
         <div class="form-group">
           <label for="cadSenha">Crie uma senha</label>
           <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" minlength="6" required>
@@ -231,7 +223,7 @@
   <script>
     // 1. FUNÇÕES VISUAIS GLOBAIS
     window.alternarAba = function(modo) {
-      window.exibirMensagem('', ''); // Limpa alertas anteriores
+      window.exibirMensagem('', '');
 
       const tabLogin = document.getElementById('tabLogin');
       const tabCadastro = document.getElementById('tabCadastro');
@@ -264,7 +256,6 @@
       msgBox.innerText = texto;
     };
 
-    // Identifica o modo pela URL ao carregar a página (?modo=cadastro)
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('modo') === 'cadastro') {
@@ -272,9 +263,9 @@
       }
     });
 
-    // 2. CONFIGURAÇÃO DO SUPABASE (Mudamos 'supabase' para 'supabaseClient' para evitar conflito)
+    // 2. CONFIGURAÇÃO DO SUPABASE
     const SUPABASE_URL = 'https://yhecaaajbgetcnfdcqxj.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFqYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFjYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
     
     let supabaseClient;
     if (window.supabase) {
@@ -309,16 +300,14 @@
       }
     };
 
-    // 4. PROCESSAR CADASTRO
+    // 4. PROCESSAR CADASTRO (BAIXO ATRITO)
     window.handleCadastro = async function(event) {
       event.preventDefault();
       window.exibirMensagem('', '');
 
       if (!supabaseClient) return window.exibirMensagem('Erro de conexão. Atualize a página.', 'error');
 
-      // Pegando todos os valores do formulário
       const nome = document.getElementById('cadNome').value;
-      const whatsapp = document.getElementById('cadWhatsapp').value;
       const email = document.getElementById('cadEmail').value;
       const password = document.getElementById('cadSenha').value;
       const btn = document.getElementById('btnCadastrarSubmit');
@@ -332,17 +321,14 @@
 
         const user = authData.user;
         if (user) {
-          // Insere na tabela usuários
-          const { error: userTableError } = await supabaseClient.from('usuarios').insert([
-            { id: user.id, email: user.email, perfil: 'assinante' }
-          ]);
+          // Salva o usuário essencial (garante o lead capturado pelo e-mail)
+          const { error: userTableError } = await supabaseClient.from('usuarios').insert([{ id: user.id, email: user.email, perfil: 'assinante' }]);
           if (userTableError) throw userTableError;
 
-          // Insere na tabela assinantes com os dados reais
+          // Cria o registro inicial no assinante (com nome provisório para estabelecimento/whats que serão preenchidos no modal da home)
           const { error: assinanteError } = await supabaseClient.from('assinantes').insert([{
             usuario_id: user.id, 
             nome: nome, 
-            telefone: whatsapp, // Certifique-se de que a coluna se chama 'telefone' ou 'whatsapp' no seu Supabase
             email_contato: email, 
             plano: 'basico', 
             status_assinatura: 'degustacao'
@@ -350,6 +336,8 @@
           if (assinanteError) throw assinanteError;
 
           window.exibirMensagem('Conta criada com sucesso!', 'success');
+          
+          // Redireciona para o painel acionando o modal de onboarding
           setTimeout(() => { window.location.href = 'home.html?onboarding=true'; }, 1000);
         }
       } catch (error) {
