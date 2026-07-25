@@ -13,8 +13,8 @@
       --bg-light: #F8FAFC;
       --text-dark: #0F172A;
       --text-gray: #475569;
-      --primary: #4F46E5; /* Azul Indigo (Confiança) */
-      --action: #10B981; /* Verde Esmeralda (Ação/Crescimento) */
+      --primary: #4F46E5;
+      --action: #10B981;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -25,7 +25,7 @@
       line-height: 1.6;
     }
 
-    /* CABEÇALHO (Onde fica o Login) */
+    /* CABEÇALHO */
     header {
       display: flex;
       justify-content: space-between;
@@ -35,6 +35,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+    
     .btn-login {
       color: var(--primary);
       text-decoration: none;
@@ -106,7 +107,7 @@
       color: var(--text-gray);
     }
 
-    /* SEÇÃO DE BENEFÍCIOS (Dores) */
+    /* SEÇÃO DE BENEFÍCIOS */
     .benefits {
       background: #FFFFFF;
       padding: 60px 5%;
@@ -137,44 +138,6 @@
       .hero p { font-size: 16px; }
       .btn-cta { font-size: 16px; padding: 16px 24px; width: 100%; }
     }
-    /* ESTILOS DO MODAL DE CADASTRO */
-      .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-      .modal-box {
-        background: #FFF;
-        padding: 32px;
-        border-radius: 16px;
-        width: 90%;
-        max-width: 400px;
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-        position: relative;
-      }
-      .modal-close {
-        position: absolute;
-        top: 16px; right: 16px;
-        background: none; border: none;
-        font-size: 20px; cursor: pointer; color: var(--text-gray);
-      }
-      .form-group { margin-bottom: 16px; text-align: left; }
-      .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-      .form-group input {
-        width: 100%; padding: 12px; border: 1px solid #CBD5E1;
-        border-radius: 8px; font-size: 14px; outline: none;
-      }
-      .form-group input:focus { border-color: var(--primary); }
-      .btn-submit {
-        width: 100%; background: var(--action); color: #FFF;
-        border: none; padding: 14px; border-radius: 8px;
-        font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px;
-      }
   </style>
 </head>
 <body>
@@ -182,8 +145,8 @@
   <!-- CABEÇALHO -->
   <header>
     <div class="logo">AgendAi.</div>
-    <!-- Esse botão levará para o arquivo login.html no futuro -->
-    <a href="login.html" class="btn-login">Entrar</a>
+    <!-- Botão direciona para login.html focado na aba de Login -->
+    <a href="login.html?modo=login" class="btn-login">Entrar</a>
   </header>
 
   <!-- SEÇÃO PRINCIPAL -->
@@ -192,12 +155,12 @@
     <h1>Pare de perder clientes porque estava ocupado demais <span>para responder.</span></h1>
     <p>Seu cliente agenda sozinho a qualquer hora. Você elimina os buracos na agenda, acaba com os faltosos e ganha tempo para focar no que realmente importa: o seu trabalho.</p>
     
-    <!-- Esse botão levará para o cadastro.html -->
-    <a href="javascript:void(0)" onclick="abrirModal()" class="btn-cta">Começar meus 30 Dias Grátis</a>
+    <!-- Botão direciona para login.html focado na aba de Cadastro -->
+    <a href="login.html?modo=cadastro" class="btn-cta">Começar meus 30 Dias Grátis</a>
     <span class="garantia">Sem necessidade de cartão de crédito.</span>
   </section>
 
-  <!-- SEÇÃO DE PROBLEMA / SOLUÇÃO -->
+  <!-- SEÇÃO DE BENEFÍCIOS -->
   <section class="benefits">
     <div class="benefits-grid">
       
@@ -221,102 +184,6 @@
 
     </div>
   </section>
-<!-- MODAL DE CADASTRO -->
-<div id="modalCadastro" class="modal-overlay">
-  <div class="modal-box">
-    <button class="modal-close" onclick="fecharModal()">&times;</button>
-    <h2 style="margin-bottom: 8px;">Crie sua conta</h2>
-    <p style="font-size: 14px; color: var(--text-gray); margin-bottom: 20px;">
-      Aproveite seus 30 dias de teste grátis sem compromisso.
-    </p>
 
-    <form onsubmit="handleCadastro(event)">
-      <div class="form-group">
-        <label for="cadEmail">Seu e-mail principal</label>
-        <input type="email" id="cadEmail" placeholder="seu@email.com" required>
-      </div>
-      <div class="form-group">
-        <label for="cadSenha">Crie uma senha</label>
-        <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" minlength="6" required>
-      </div>
-      <button type="submit" id="btnCadastrar" class="btn-submit">Criar conta e começar</button>
-    </form>
-  </div>
-</div>
-  <!-- SDK Oficial do Supabase via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Script de Autenticação e Modal -->
-<script>
-  // Conexão com o Supabase
-  const SUPABASE_URL = 'https://yhecaaajbgetcnfdcqxj.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZWNhYWFqYmdldGNuZmRjcXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4MzE1ODAsImV4cCI6MjEwMDQwNzU4MH0.vKQchgJqiak8koqi56Cik1WIuTIlYkoKdPaH3xAUZzs';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Funções de Abertura/Fechamento do Modal
-  function abrirModal() {
-    document.getElementById('modalCadastro').style.display = 'flex';
-  }
-  function fecharModal() {
-    document.getElementById('modalCadastro').style.display = 'none';
-  }
-
-  // Função de Cadastro no Supabase
-  async function handleCadastro(event) {
-    event.preventDefault();
-
-    const email = document.getElementById('cadEmail').value;
-    const password = document.getElementById('cadSenha').value;
-    const btnSubmit = document.getElementById('btnCadastrar');
-
-    try {
-      btnSubmit.disabled = true;
-      btnSubmit.innerText = 'Criando sua conta...';
-
-      // 1. Criar Auth no Supabase
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-      });
-
-      if (authError) throw authError;
-      const user = authData.user;
-
-      if (user) {
-        // 2. Inserir na tabela usuarios
-        const { error: userTableError } = await supabase
-          .from('usuarios')
-          .insert([{ 
-            id: user.id, 
-            email: user.email, 
-            perfil: 'assinante' 
-          }]);
-
-        if (userTableError) throw userTableError;
-
-        // 3. Inserir na tabela assinantes
-        const { error: assinanteError } = await supabase
-          .from('assinantes')
-          .insert([{
-            usuario_id: user.id,
-            nome: 'Novo Assinante',
-            email_contato: user.email,
-            plano: 'basico',
-            status_assinatura: 'degustacao'
-          }]);
-
-        if (assinanteError) throw assinanteError;
-
-        // 4. Redirecionar para o painel com a flag do modal de onboarding
-        window.location.href = 'home.html?onboarding=true';
-      }
-
-    } catch (error) {
-      alert('Erro ao criar conta: ' + error.message);
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = 'Criar conta e começar';
-    }
-  }
-</script>
 </body>
 </html>
