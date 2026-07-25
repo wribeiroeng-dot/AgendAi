@@ -240,7 +240,7 @@
       cursor: pointer; color: #0b132b; z-index: 99;
     }
 
-    /* MODAL DE BOAS-VINDAS (ONBOARDING OPCIONAL) */
+    /* MODAL FLUTUANTE DE BOAS-VINDAS */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -293,7 +293,7 @@
 
     .input-group {
       text-align: left;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .input-group label {
       display: block;
@@ -321,6 +321,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      margin-top: 20px;
     }
 
     .btn-primary {
@@ -406,18 +407,23 @@
 
   <div id="toast" class="toast">Link copiado com sucesso! ✅</div>
 
-  <!-- MODAL DE BOAS-VINDAS (OPCIONAL) -->
+  <!-- MODAL FLUTUANTE DE BOAS-VINDAS COM NOME E WHATSAPP (MÁSCARA DE CELULAR) -->
   <div id="welcomeModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-icon">🎉</div>
       <h2 class="modal-title">Boas-vindas ao AgendAi!</h2>
       <p class="modal-description">
-        Como você gostaria de ser chamado(a) ou qual o nome do seu estúdio?
+        Preencha os dados abaixo para configurar o seu perfil e liberar a sua agenda.
       </p>
 
       <div class="input-group">
         <label for="onboardingNome">Seu Nome / Estúdio</label>
         <input type="text" id="onboardingNome" placeholder="Ex: Studio da Ana ou Ana">
+      </div>
+
+      <div class="input-group">
+        <label for="onboardingWhatsapp">Número do WhatsApp</label>
+        <input type="text" id="onboardingWhatsapp" placeholder="(31) 99999-9999" maxlength="15" oninput="aplicarMascaraWhatsapp(this)">
       </div>
 
       <div class="modal-actions">
@@ -426,7 +432,7 @@
       </div>
 
       <p class="modal-notice">
-        ✨ <strong>Seu teste de 7 dias grátis já está ativo!</strong> Você pode alterar seus dados a qualquer momento no menu <em>Ajustes</em>.
+        ✨ <strong>Seu teste grátis já está ativo!</strong> Você pode alterar suas informações a qualquer momento no menu <em>Ajustes</em>.
       </p>
     </div>
   </div>
@@ -436,31 +442,22 @@
     <nav class="app-navigation">
       <div class="brand-logo">AgendAi.</div>
       <div class="nav-links">
-        <!-- Link Início: Continua com a classe "active" porque estamos na home.html -->
         <a href="home.html" class="nav-item active">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
           Início
         </a>
-        
-        <!-- Link Agenda: Direciona para agenda.html -->
         <a href="agenda.html" class="nav-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
           Agenda
         </a>
-        
-        <!-- Link Serviços: Direciona para servicos.html -->
         <a href="servicos.html" class="nav-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M360-120 160-320l200-200 56 56-103 104h111q56 0 94.5-40T557-498l-72-88q-21-27-52.5-43.5T360-646h-80v-80h80q56 0 102 23.5t82 64.5l70 86q30 37 77.5 58.5T790-472v80q-63 0-117.5-26T574-488l-14 18q-33 41-80 65.5T376-380H213l103 104-56 56Z"/></svg>
           Serviços
         </a>
-        
-        <!-- Link Ajustes: Direciona para ajustes.html -->
         <a href="ajustes.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110-190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
           Ajustes
         </a>
-        
-        <!-- Botão de Sair mantido idêntico, pois já utiliza o redirecionamento via JS -->
         <a onclick="fazerLogout()" class="nav-item logout-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
           Sair
@@ -468,7 +465,7 @@
       </div>
     </nav>
 
-    <!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-container">
       <div class="header-dashboard">
         <div>
@@ -508,7 +505,7 @@
         </div>
       </div>
 
-      <!-- TIMELINE DE AGENDAMENTOS -->
+      <!-- TIMELINE -->
       <div class="dashboard-layout-grid">
         <div>
           <h2 class="section-title">Próximos Clientes</h2>
@@ -525,19 +522,6 @@
               </div>
               <button class="btn-wa-action" onclick="openWA('Maria Silva', '09:00', 'Corte & Design VIP')" title="Enviar lembrete">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-              </button>
-            </div>
-
-            <div class="client-card">
-              <div class="client-info-wrapper">
-                <div class="client-time">10:30</div>
-                <div>
-                  <div class="client-name">Ana Carolina</div>
-                  <div class="client-service">Coloração Premium</div>
-                </div>
-              </div>
-              <button class="btn-wa-action" onclick="openWA('Ana Carolina', '10:30', 'Coloração Premium')" title="Enviar lembrete">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
               </button>
             </div>
           </div>
@@ -558,7 +542,22 @@
 
     let usuarioAtual = null;
 
-    // 2. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
+    // 2. MÁSCARA DO WHATSAPP (APENAS NÚMEROS)
+    function aplicarMascaraWhatsapp(input) {
+      let valor = input.value.replace(/\D/g, ''); // Remove tudo que não for número
+      if (valor.length > 11) valor = valor.slice(0, 11); // Limita a 11 dígitos (DDD + 9)
+
+      if (valor.length > 7) {
+        valor = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+      } else if (valor.length > 2) {
+        valor = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+      } else if (valor.length > 0) {
+        valor = `(${valor}`;
+      }
+      input.value = valor;
+    }
+
+    // 3. GUARDA DE ROTA E VERIFICAÇÃO DE NOME
     async function checarAutenticacao() {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
@@ -570,9 +569,7 @@
       usuarioAtual = session.user;
       atualizarDataAtual();
 
-      // Busca o nome direto dos metadados nativos do Supabase Auth
       const nomeCadastrado = usuarioAtual.user_metadata?.display_name;
-
       const greetingTitle = document.getElementById('greetingTitle');
 
       if (nomeCadastrado) {
@@ -583,7 +580,7 @@
       }
     }
 
-    // 3. GERENCIAMENTO DO MODAL DE ONBOARDING
+    // 4. GERENCIAMENTO DO MODAL
     function abrirModalOnboarding() {
       const modal = document.getElementById('welcomeModal');
       modal.classList.add('active');
@@ -594,32 +591,57 @@
       modal.classList.remove('active');
     }
 
+    // 5. SALVAR DADOS NO SUPABASE (ATUALIZANDO NAS 3 TABELAS: assinantes, perfis, usuarios)
     async function salvarNomeOnboarding() {
       const nomeDigitado = document.getElementById('onboardingNome').value.trim();
+      const whatsappDigitado = document.getElementById('onboardingWhatsapp').value.trim();
 
       if (!nomeDigitado) {
-        exibirToast("Digite um nome ou clique em 'Preencher depois'");
+        exibirToast("Por favor, preencha o nome ou estúdio.");
         return;
       }
 
-      // Salva o nome direto nos metadados do usuário no Supabase Auth
-      const { data, error } = await supabaseClient.auth.updateUser({
-        data: { display_name: nomeDigitado }
-      });
-
-      if (error) {
-        console.error("Erro ao salvar nome:", error);
-        exibirToast("Erro ao salvar. Tente novamente.");
+      if (!whatsappDigitado || whatsappDigitado.length < 14) {
+        exibirToast("Por favor, informe um número de WhatsApp válido.");
         return;
       }
 
-      // Atualiza a saudação na tela instantaneamente
-      document.getElementById('greetingTitle').innerText = `Olá, ${nomeDigitado}! ✨`;
-      fecharModalOnboarding();
-      exibirToast("Perfil atualizado com sucesso! 🎉");
+      const userId = usuarioAtual.id;
+
+      try {
+        // A. Atualiza nos metadados de autenticação do Supabase
+        const { error: authError } = await supabaseClient.auth.updateUser({
+          data: { display_name: nomeDigitado, whatsapp: whatsappDigitado }
+        });
+        if (authError) throw authError;
+
+        // B. Atualiza na tabela 'assinantes'[cite: 1]
+        await supabaseClient.from('assinantes')
+          .update({ nome: nomeDigitado, whatsapp: whatsappDigitado })
+          .eq('usuario_id', userId);
+
+        // C. Atualiza na tabela 'perfis'[cite: 1]
+        await supabaseClient.from('perfis')
+          .update({ nome: nomeDigitado})
+          .eq('usuario_id', userId);
+
+        // D. Atualiza na tabela 'usuarios'[cite: 1]
+        await supabaseClient.from('usuarios')
+          .update({ nome: nomeDigitado })
+          .eq('id', userId);
+
+        // Atualiza a interface instantaneamente
+        document.getElementById('greetingTitle').innerText = `Olá, ${nomeDigitado}! ✨`;
+        fecharModalOnboarding();
+        exibirToast("Perfil e WhatsApp salvos com sucesso! 🎉");
+
+      } catch (error) {
+        console.error("Erro ao salvar dados:", error);
+        exibirToast("Erro ao salvar dados no banco. Tente novamente.");
+      }
     }
 
-    // 4. FUNÇÕES UTILITÁRIAS
+    // 6. FUNÇÕES UTILITÁRIAS
     function atualizarDataAtual() {
       const hoje = new Date();
       const opcoes = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -666,7 +688,7 @@
       setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // Inicializa a verificação
+    // Inicializa a verificação de autenticação e onboarding
     checarAutenticacao();
   </script>
 </body>
