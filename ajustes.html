@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgendAi - Ajustes</title>
   
+  <!-- SUPABASE SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Fonte Premium Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,14 +38,14 @@
       overflow-x: hidden;
     }
 
-    /* LAYOUT WRAPPER (Padronizado com Home, Agenda e Serviços) */
+    /* LAYOUT WRAPPER */
     .layout-wrapper {
       display: flex;
       width: 100%;
       min-height: 100vh;
     }
 
-    /* NAVEGAÇÃO / MENU LATERAL (Padronizado) */
+    /* NAVEGAÇÃO / MENU LATERAL */
     .app-navigation {
       background: var(--card-bg);
       border-right: 1px solid var(--card-border);
@@ -83,6 +86,10 @@
     .nav-item:hover, .nav-item.active {
       color: var(--accent);
       background: rgba(212, 175, 55, 0.1);
+    }
+    .nav-item.logout-item:hover {
+      color: var(--status-canceled);
+      background: rgba(239, 68, 68, 0.1);
     }
     .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
 
@@ -241,7 +248,8 @@
       font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
       transition: opacity 0.2s;
     }
-    .btn-submit:active { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:active:not(:disabled) { opacity: 0.85; }
 
     /* TOAST */
     .toast {
@@ -254,7 +262,7 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* RESPONSIVIDADE (Mobile vs Desktop idêntico às demais telas) */
+    /* RESPONSIVIDADE */
     @media (max-width: 1023px) {
       .layout-wrapper { flex-direction: column; }
       .main-container { padding-bottom: 90px; height: 100vh; }
@@ -292,6 +300,7 @@
       .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
       .nav-links { flex-direction: column; gap: 8px; height: 100%; }
       .nav-item { font-size: 15px; padding: 14px 16px; }
+      .nav-item.logout-item { margin-top: auto; }
       .main-container { padding: 40px; }
     }
   </style>
@@ -300,7 +309,7 @@
 
   <div class="layout-wrapper">
 
-    <!-- NAVEGAÇÃO LATERAL / INFERIOR (Padronizada) -->
+    <!-- NAVEGAÇÃO LATERAL / INFERIOR -->
     <nav class="app-navigation">
       <div class="brand-logo">AgendAi.</div>
       <div class="nav-links">
@@ -319,6 +328,10 @@
         <a href="ajustes.html" class="nav-item active">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M370-80l-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110-190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
           Ajustes
+        </a>
+        <a onclick="fazerLogout()" class="nav-item logout-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+          Sair
         </a>
       </div>
     </nav>
@@ -344,13 +357,13 @@
                 </div>
                 <div>
                   <div class="settings-label">Perfil do Usuário</div>
-                  <div class="settings-subtext" id="currentUserDisplay">AgendaAI-Adm</div>
+                  <div class="settings-subtext" id="currentUserDisplay">Carregando...</div>
                 </div>
               </div>
               <div class="settings-value">Editar &gt;</div>
             </div>
 
-            <div class="settings-item" onclick="showToast('Configurando horários...')">
+            <div class="settings-item" onclick="showToast('Horários em desenvolvimento...')">
               <div class="settings-item-left">
                 <div class="settings-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m612-292-56-56 104-104H440v-80h220L556-636l56-56 200 200-200 200ZM400-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-800q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T400-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
@@ -366,7 +379,7 @@
 
           <div class="settings-section-title">Preferências do Sistema</div>
           <div class="settings-card">
-            <div class="settings-item" onclick="showToast('Opção de notificações alternada')">
+            <div class="settings-item" onclick="showToast('Notificações em desenvolvimento...')">
               <div class="settings-item-left">
                 <div class="settings-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
@@ -379,7 +392,7 @@
               <div class="settings-value" style="color: var(--accent);">Ativo</div>
             </div>
 
-            <div class="settings-item" onclick="showToast('Saindo da sessão...')">
+            <div class="settings-item" onclick="fazerLogout()">
               <div class="settings-item-left">
                 <div class="settings-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--status-canceled);">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-56-58 102-102H360v-80h326L584-622l56-58 200 200-200 200Z"/></svg>
@@ -417,19 +430,101 @@
   </div>
 
   <script>
-    // Modal de Perfil
-    function openProfileModal() {
-      document.getElementById('profileModal').classList.add('active');
+    // 1. CONEXÃO COM O SUPABASE
+    const SUPABASE_URL = "https://yhecaaajbgetcnfdcqxj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let usuarioAtual = null;
+
+    // 2. GUARDA DE ROTA E BUSCA DE DADOS
+    async function checarAutenticacao() {
+      try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+        if (error || !session) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        usuarioAtual = session.user;
+        carregarPerfil();
+      } catch (err) {
+        console.error("Erro na autenticação:", err);
+      }
     }
 
-    function handleProfileSubmit(e) {
-      e.preventDefault();
-      const newName = document.getElementById('userNameInput').value.trim();
-      if (newName) {
-        document.getElementById('currentUserDisplay').innerText = newName;
-        showToast('Perfil atualizado com sucesso!');
+    async function carregarPerfil() {
+      try {
+        const { data: perfil, error } = await supabaseClient
+          .from('perfis')
+          .select('*')
+          .eq('id', usuarioAtual.id)
+          .maybeSingle();
+
+        if (perfil) {
+          // Pega o nome existente ou deixa um texto padrão
+          const nomeUsuario = perfil.nome || perfil.nome_completo || perfil.display_name || "Usuário não nomeado";
+          
+          // Atualiza a tela
+          document.getElementById('currentUserDisplay').innerText = nomeUsuario;
+          
+          // Preenche o input do modal com o nome atual
+          document.getElementById('userNameInput').value = perfil.nome || perfil.nome_completo || perfil.display_name || "";
+        }
+      } catch (err) {
+        console.error("Erro ao buscar perfil:", err);
       }
-      closeModal('profileModal');
+    }
+
+    // 3. ATUALIZAÇÃO DE PERFIL
+    async function handleProfileSubmit(e) {
+      e.preventDefault();
+      
+      const newName = document.getElementById('userNameInput').value.trim();
+      const btnSave = document.getElementById('btnSaveProfile');
+      
+      if (!newName) return;
+
+      // Altera o estado do botão para dar feedback visual
+      btnSave.innerText = "Salvando...";
+      btnSave.disabled = true;
+
+      try {
+        // Atualiza as colunas de nome no banco (garantimos em duas colunas comuns)
+        const { error } = await supabaseClient
+          .from('perfis')
+          .update({ 
+            nome: newName,
+            display_name: newName 
+          })
+          .eq('id', usuarioAtual.id);
+
+        if (error) throw error;
+
+        // Sucesso: atualiza a tela e fecha o modal
+        document.getElementById('currentUserDisplay').innerText = newName;
+        showToast('Perfil atualizado com sucesso! ✅');
+        closeModal('profileModal');
+
+      } catch (error) {
+        console.error("Erro ao salvar perfil:", error.message);
+        showToast('Erro ao atualizar perfil ❌');
+      } finally {
+        // Restaura o botão
+        btnSave.innerText = "Salvar Alterações";
+        btnSave.disabled = false;
+      }
+    }
+
+    // 4. FUNÇÕES UTILITÁRIAS E LOGOUT
+    async function fazerLogout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    }
+
+    function openProfileModal() {
+      document.getElementById('profileModal').classList.add('active');
     }
 
     function closeModal(modalId) {
@@ -442,6 +537,9 @@
       toast.classList.add('show');
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
+
+    // Inicializa ao carregar a página
+    checarAutenticacao();
   </script>
 </body>
 </html>
