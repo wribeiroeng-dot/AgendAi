@@ -440,49 +440,50 @@
 
     // 2. GUARDA DE ROTA E BUSCA DE DADOS NO SUPABASE
     async function checarAutenticacao() {
-      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
 
-      if (error || !session) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      usuarioAtual = session.user;
-      atualizarDataAtual();
-
-      // Busca dados na tabela 'perfis' usando o id do usuário logado
-      const { data: perfil, error: perfilError } = await supabaseClient
-        .from('perfis')
-        .select('*')
-        .eq('id', usuarioAtual.id)
-        .single();
-
-      const greetingTitle = document.getElementById('greetingTitle');
-      const warningBanner = document.getElementById('profileWarningBanner');
-      const toggle = document.getElementById('agendaToggle');
-      const textStatus = document.getElementById('statusText');
-
-      // Verifica se o perfil existe e tem um nome cadastrado
-      if (!perfilError && perfil && (perfil.nome || perfil.nome_completo || perfil.display_name)) {
-        const nomeUsuario = perfil.nome || perfil.nome_completo || perfil.display_name;
-        greetingTitle.innerText = `Olá, ${nomeUsuario}! ✨`;
-        warningBanner.style.display = 'none';
-
-        // Salva o slug/link se existir na tabela
-        linkPublicoSlug = perfil.slug || perfil.username || usuarioAtual.id;
-
-        // Atualiza o estado da agenda (se houver coluna correspondente, ex: 'agenda_aberta' ou 'ativo')
-        if (perfil.agenda_aberta !== undefined) {
-          toggle.checked = perfil.agenda_aberta;
-          atualizarTextoStatus(perfil.agenda_aberta);
+        if (error || !session) {
+          window.location.href = "login.html";
+          return;
         }
-      } else {
-        greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
-        warningBanner.style.display = 'flex';
-      }
 
-      // Opcional: Carregar dados adicionais (como métricas ou agendamentos)
-      carregarDadosDashboard(usuarioAtual.id);
+        usuarioAtual = session.user;
+        atualizarDataAtual();
+
+        // Busca dados na tabela 'perfis' usando maybeSingle para segurança
+        const { data: perfil, error: perfilError } = await supabaseClient
+          .from('perfis')
+          .select('*')
+          .eq('id', usuarioAtual.id)
+          .maybeSingle();
+
+        const greetingTitle = document.getElementById('greetingTitle');
+        const warningBanner = document.getElementById('profileWarningBanner');
+        const toggle = document.getElementById('agendaToggle');
+        const textStatus = document.getElementById('statusText');
+
+        if (!perfilError && perfil && (perfil.nome || perfil.nome_completo || perfil.display_name)) {
+          const nomeUsuario = perfil.nome || perfil.nome_completo || perfil.display_name;
+          greetingTitle.innerText = `Olá, ${nomeUsuario}! ✨`;
+          warningBanner.style.display = 'none';
+
+          linkPublicoSlug = perfil.slug || perfil.username || usuarioAtual.id;
+
+          if (perfil.agenda_aberta !== undefined) {
+            toggle.checked = perfil.agenda_aberta;
+            atualizarTextoStatus(perfil.agenda_aberta);
+          }
+        } else {
+          greetingTitle.innerText = `Olá, seja bem-vindo(a)! ✨`;
+          warningBanner.style.display = 'flex';
+        }
+
+        carregarDadosDashboard(usuarioAtual.id);
+      } catch (err) {
+        console.error("Erro ao carregar autenticação:", err);
+        document.getElementById('greetingTitle').innerText = "Olá, bem-vindo(a)! ✨";
+      }
     }
 
     // 3. FUNÇÕES UTILITÁRIAS E DE INTERAÇÃO
@@ -504,7 +505,6 @@
       const isOpen = toggle.checked;
       atualizarTextoStatus(isOpen);
 
-      // Salva o estado no Supabase na tabela 'perfis'
       const { error } = await supabaseClient
         .from('perfis')
         .update({ agenda_aberta: isOpen })
@@ -530,28 +530,19 @@
     }
 
     function copyLink() {
-      // 1. Pega o nome do estabelecimento exibido no título ou busca do perfil do banco
       const nomeElemento = document.getElementById('greetingTitle').innerText;
-      
-      // Remove o "Olá, " do começo e o "! ✨" do final para isolar apenas o nome do estabelecimento
       let nomeEstabelecimento = nomeElemento.replace("Olá, ", "").replace("! ✨", "").trim();
       
-      // Se por acaso o perfil ainda estiver carregando ou sem nome, usa o ID como fallback seguro
       if (!nomeEstabelecimento || nomeEstabelecimento.includes("Carregando") || nomeEstabelecimento.includes("seja bem-vindo")) {
         nomeEstabelecimento = linkPublicoSlug || usuarioAtual.id;
       }
 
-      // 2. Transforma o nome para o formato seguro de URL (ex: "Studio Dezzinha" vira "Studio%20Dezzinha")
       const nomeFormatado = encodeURIComponent(nomeEstabelecimento);
-      
-      // 3. Monta o link completo apontando para o seu GitHub Pages
       const linkFinal = `https://wribeiroeng-dot.github.io/AgendAi/?u=${nomeFormatado}`;
       
-      // 4. Copia para a área de transferência
       navigator.clipboard.writeText(linkFinal).then(() => {
         exibirToast("Link de agendamento copiado com sucesso! ✅");
       });
-    }
     }
 
     function openWA(nomeCliente, horario, servico) {
@@ -567,20 +558,9 @@
       setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // Exemplo de função para buscar agendamentos reais (caso possua uma tabela de agendamentos)
     async function carregarDadosDashboard(userId) {
       try {
-        // Exemplo: se houver uma tabela chamada 'agendamentos' com coluna 'usuario_id'
-        /*
-        const { data: agendamentos, error } = await supabaseClient
-          .from('agendamentos')
-          .select('*')
-          .eq('usuario_id', userId);
-
-        if (!error && agendamentos) {
-          // Atualize os KPIs e a Timeline aqui com os dados reais do banco
-        }
-        */
+        // Espaço reservado para carregar dados futuros
       } catch (err) {
         console.error("Erro ao carregar dados do dashboard:", err);
       }
