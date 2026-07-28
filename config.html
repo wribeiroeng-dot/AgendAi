@@ -520,27 +520,7 @@
 
     let usuarioAtual = null;
 
-    // --- LÓGICA DE PREVIEW DE IMAGEM DA LOGO ---
-    function previewLogo(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          // Oculta o placeholder e exibe a imagem no quadrado
-          document.getElementById('logoPlaceholder').style.display = 'none';
-          document.getElementById('logoPreview').src = e.target.result;
-          document.getElementById('logoPreview').style.display = 'block';
-          
-          showToast('Imagem selecionada (falta integrar o envio)');
-          
-          // Lógica futura: 
-          // 1. Fazer upload do 'file' para o Supabase Storage
-          // 2. Pegar a URL gerada
-          // 3. Dar um UPDATE na tabela 'estabelecimentos' na coluna 'logo_url'
-        }
-        reader.readAsDataURL(file);
-      }
-    }
+    previewlogo
 
     // --- LÓGICA DE ABAS (TABS) ---
     function switchTab(evento, idAba) {
