@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgendAi - Configurações</title>
+  
+  <!-- SUPABASE SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Fonte Premium Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta Azul Marinho Luxo & Dourado */
+      --bg: #0b132b;
+      --card-bg: #1c2541;
+      --card-border: rgba(212, 175, 55, 0.2);
+      --accent: #d4af37; 
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #0f172a;
+      --sidebar-width: 260px;
+      --status-canceled: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100dvh;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    /* LAYOUT WRAPPER */
+    .layout-wrapper { display: flex; width: 100%; min-height: 100vh; }
+
+    /* NAVEGAÇÃO / MENU LATERAL */
+    .app-navigation { background: var(--card-bg); border-right: 1px solid var(--card-border); display: flex; z-index: 100; }
+    .brand-logo { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; display: none; }
+    .nav-links { display: flex; width: 100%; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; color: var(--text-muted);
+      text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 16px;
+      border-radius: 12px; transition: all 0.2s ease; cursor: pointer; border: none;
+      background: transparent; text-align: left; width: 100%;
+    }
+    .nav-item:hover, .nav-item.active { color: var(--accent); background: rgba(212, 175, 55, 0.1); }
+    .nav-item.logout-item:hover { color: var(--status-canceled); background: rgba(239, 68, 68, 0.1); }
+    .nav-item svg { fill: currentColor; width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ÁREA DE CONTEÚDO PRINCIPAL */
+    .main-container {
+      flex: 1; padding: 24px; overflow-y: auto; max-width: 1400px; margin: 0 auto;
+      display: flex; flex-direction: column; position: relative; height: 100vh;
+    }
+
+    /* CABEÇALHO E ABAS */
+    .page-header { padding: 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+    .page-title { font-size: 24px; font-weight: 800; }
+
+    .tabs-container {
+      display: flex; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs-container::-webkit-scrollbar { display: none; }
+    
+    .tab-btn {
+      background: none; border: none; padding: 12px 4px; font-size: 14px; font-weight: 700;
+      color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--text-main); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .tab-content { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 100px; scrollbar-width: none; }
+    .tab-content::-webkit-scrollbar { display: none; }
+    .tab-content.active { display: flex; }
+
+    /* LISTAS E CARDS */
+    .settings-section-title {
+      font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 8px; margin-top: 16px;
+    }
+    .settings-card { background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; margin-bottom: 16px;}
+    
+    .settings-item {
+      display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s;
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item:hover { background: rgba(255,255,255,0.02); }
+
+    .settings-item-left { display: flex; align-items: center; gap: 12px; }
+    .settings-icon {
+      width: 32px; height: 32px; background: rgba(212, 175, 55, 0.1); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0;
+    }
+    .settings-icon svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .settings-label { font-size: 13px; font-weight: 600; color: var(--text-main); }
+    .settings-subtext { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .settings-value { font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+    /* MODAL BOTTOM SHEET */
+    .modal-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 100;
+      display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .bottom-sheet {
+      width: 100%; background: #111a36; border-top: 1px solid var(--card-border);
+      border-radius: 24px 24px 0 0; padding: 20px 20px 30px 20px;
+      transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto;
+    }
+    .modal-overlay.active .bottom-sheet { transform: translateY(0); }
+
+    .sheet-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 16px auto; }
+    .sheet-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--text-main); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+    .form-input, .form-select {
+      width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 12px; color: var(--text-main); font-size: 14px; outline: none;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--accent); }
+    
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+
+    .btn-submit {
+      width: 100%; background: var(--accent); color: #0b132b; border: none; border-radius: 12px; padding: 14px;
+      font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: opacity 0.2s;
+    }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:active:not(:disabled) { opacity: 0.85; }
+
+    /* TOAST */
+    .toast {
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      background: rgba(34, 197, 94, 0.9); color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4); opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 200; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1023px) {
+      .layout-wrapper { flex-direction: column; }
+      .main-container { padding-bottom: 90px; height: 100vh; }
+      .app-navigation {
+        position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: rgba(11, 19, 43, 0.95);
+        backdrop-filter: blur(10px); border-top: 1px solid var(--card-border); border-right: none;
+        justify-content: space-around; align-items: center; padding: 0 10px;
+      }
+      .nav-links { justify-content: space-around; }
+      .nav-item { flex-direction: column; gap: 4px; font-size: 11px; padding: 6px 12px; width: auto; text-align: center; }
+    }
+    @media (min-width: 1024px) {
+      .app-navigation { width: var(--sidebar-width); flex-direction: column; padding: 30px 20px; position: sticky; top: 0; height: 100vh; }
+      .brand-logo { display: block; margin-bottom: 40px; padding-left: 10px; }
+      .nav-links { flex-direction: column; gap: 8px; height: 100%; }
+      .nav-item { font-size: 15px; padding: 14px 16px; }
+      .nav-item.logout-item { margin-top: auto; }
+      .main-container { padding: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout-wrapper">
+
+    <!-- NAVEGAÇÃO LATERAL / INFERIOR -->
+    <nav class="app-navigation">
+      <div class="brand-logo">AgendAi.</div>
+      <div class="nav-links">
+        <a href="home.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+          Início
+        </a>
+        <a href="agenda.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
+          Agenda
+        </a>
+        <a href="config.html" class="nav-item active">
+          <!-- Novo ícone de engrenagem limpo e verificado -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.66 2.42 14.43 2 14 2h-4c-.43 0-.66.42-.74.84l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.08.42.31.84.74.84h4c.43 0 .66-.42.74-.84l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+          </svg>
+          Configurações
+        </a>
+        <a onclick="fazerLogout()" class="nav-item logout-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+          Sair
+        </a>
+      </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-container">
+      <div id="toast" class="toast">Ação realizada com sucesso!</div>
+      
+      <div class="page-header">
+        <h1 class="page-title">Configurações</h1>
+      </div>
+
+      <!-- NAVEGAÇÃO DAS ABAS -->
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-negocio')">Meu Negócio</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-servicos')">Serviços</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-equipe')">Equipe</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-seguranca')">Segurança</button>
+      </div>
+      
+      <!-- ================= ABA: MEU NEGÓCIO ================= -->
+      <div id="tab-negocio" class="tab-content active">
+        
+        <div class="settings-section-title">Dados</div>
+        <div class="settings-card">
+          
+          <!-- UPLOAD DE LOGO -->
+          <div class="settings-item" onclick="document.getElementById('logoInput').click()">
+            <div class="settings-item-left">
+              <div class="settings-icon" style="background: rgba(255,255,255,0.02); overflow: hidden; border: 1px dashed rgba(212, 175, 55, 0.5);">
+                <!-- Imagem de preview (Oculta por padrão) -->
+                <img id="logoPreview" src="" alt="Logo" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                <!-- Ícone de placeholder (Nuvem de upload) -->
+                <svg id="logoPlaceholder" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" style="width: 18px; height: 18px; fill: var(--accent);">
+                  <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-140h-80l120-160 120 160h-80v160h-80v-160Zm-80-340Z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="settings-label">Logo do Estabelecimento</div>
+                <div class="settings-subtext">Toque para alterar a imagem</div>
+              </div>
+            </div>
+            <div class="settings-value">Alterar &gt;</div>
+            <!-- Input file invisível -->
+            <input type="file" id="logoInput" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="previewLogo(event)">
+          </div>
+
+          <div class="settings-item" onclick="openModal('profileModal')">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Nome do Estabelecimento</div>
+                <div class="settings-subtext" id="currentUserDisplay">Carregando...</div>
+              </div>
+            </div>
+            <div class="settings-value">Editar &gt;</div>
+          </div>
+
+          <div class="settings-item" onclick="openModal('horarioModal')">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m612-292-56-56 104-104H440v-80h220L556-636l56-56 200 200-200 200ZM400-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-800q83 0 156 31.5T763-763q54 54 85.5 127T800-480q0 83-31.5 156T763-197q-54 54-127 85.5T400-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Horários de Funcionamento</div>
+                <div class="settings-subtext">Dias e expediente da agenda</div>
+              </div>
+            </div>
+            <div class="settings-value" id="horarioDisplay">Não definido &gt;</div>
+          </div>
+          <div class="settings-item" onclick="openModal('enderecoModal')">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Localização</div>
+                <div class="settings-subtext">Rua, Número, Bairro</div>
+              </div>
+            </div>
+            <div class="settings-value">Editar &gt;</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ABA: SERVIÇOS ================= -->
+      <div id="tab-servicos" class="tab-content">
+        <div class="settings-section-title">Catálogo Ativo</div>
+        
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div>
+                <div class="settings-label">Corte Masculino</div>
+                <div class="settings-subtext">Duração: 30 min</div>
+              </div>
+            </div>
+            <div class="settings-value">R$ 45,00</div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div>
+                <div class="settings-label">Barba Completa</div>
+                <div class="settings-subtext">Duração: 20 min</div>
+              </div>
+            </div>
+            <div class="settings-value">R$ 35,00</div>
+          </div>
+        </div>
+        
+        <button class="btn-submit" onclick="openModal('servicoModal')" style="margin-top: 0;">+ Adicionar Serviço</button>
+      </div>
+
+      <!-- ================= ABA: EQUIPE ================= -->
+      <div id="tab-equipe" class="tab-content">
+        <div class="settings-section-title">Membros Ativos</div>
+        
+        <div class="settings-card">
+          <!-- Você / Admin -->
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0-33 23.5-56.5T480-560Zm0-80Zm0 400Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Seu Nome (Você)</div>
+                <div class="settings-subtext">Admin</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Colaborador Exemplo -->
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon" style="background: transparent;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #334155; display:flex; align-items:center; justify-content:center; color: #fff; font-size:12px; font-weight:bold;">
+                  MS
+                </div>
+              </div>
+              <div>
+                <div class="settings-label">Marcos Silva</div>
+                <div class="settings-subtext">Colaborador</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-submit" onclick="openModal('equipeModal')" style="margin-top: 0;">+ Adicionar Membro</button>
+      </div>
+
+      <!-- ================= ABA: SEGURANÇA ================= -->
+      <div id="tab-seguranca" class="tab-content">
+        <div class="settings-section-title">Controle de Acesso</div>
+        
+        <div class="settings-card">
+          <div class="settings-item" onclick="openModal('senhaModal')">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z"/></svg>
+              </div>
+              <div>
+                <div class="settings-label">Alterar Senha</div>
+                <div class="settings-subtext">Atualize sua senha periodicamente</div>
+              </div>
+            </div>
+            <div class="settings-value">Editar &gt;</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MODAIS (BOTTOM SHEETS) ================= -->
+
+      <!-- Modal: Perfil -->
+      <div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Nome do Estabelecimento</div>
+          <form id="profileForm" onsubmit="event.preventDefault(); showToast('Alterado com sucesso!'); closeModal('profileModal');">
+            <div class="form-group">
+              <label class="form-label">Nome de Exibição</label>
+              <input type="text" id="userNameInput" class="form-input" placeholder="Ex: Barbearia do João" required>
+            </div>
+            <button type="submit" class="btn-submit" id="btnSaveProfile">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Horários -->
+      <div class="modal-overlay" id="horarioModal" onclick="closeModal('horarioModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Horário de Funcionamento</div>
+          <form id="horarioForm" onsubmit="event.preventDefault(); showToast('Horários salvos!'); closeModal('horarioModal');">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Abertura</label>
+                <input type="time" id="aberturaInput" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fechamento</label>
+                <input type="time" id="fechamentoInput" class="form-input" required>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit" id="btnSaveHorario">Salvar Horários</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Endereço -->
+      <div class="modal-overlay" id="enderecoModal" onclick="closeModal('enderecoModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Endereço Público</div>
+          <form onsubmit="event.preventDefault(); showToast('Endereço salvo!'); closeModal('enderecoModal');">
+            <div class="form-group">
+              <label class="form-label">CEP</label>
+              <input type="text" class="form-input" placeholder="00000-000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rua / Bairro / Cidade</label>
+              <input type="text" class="form-input" placeholder="Rua Exemplo, 123 - Centro">
+            </div>
+            <button type="submit" class="btn-submit">Salvar Endereço</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Serviço -->
+      <div class="modal-overlay" id="servicoModal" onclick="closeModal('servicoModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Adicionar Serviço</div>
+          <form onsubmit="event.preventDefault(); showToast('Serviço adicionado!'); closeModal('servicoModal');">
+            <div class="form-group">
+              <label class="form-label">Nome do Serviço</label>
+              <input type="text" class="form-input" placeholder="Ex: Corte Degrade" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Duração (Min)</label>
+                <input type="number" class="form-input" placeholder="30" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Valor (R$)</label>
+                <input type="number" step="0.01" class="form-input" placeholder="45.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">Salvar Serviço</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Equipe -->
+      <div class="modal-overlay" id="equipeModal" onclick="closeModal('equipeModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Adicionar Membro</div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 16px;">
+            A senha provisória do membro será: <strong style="color: var(--accent);">Agendai@123</strong>
+          </p>
+          <form onsubmit="event.preventDefault(); showToast('Membro criado com sucesso!'); closeModal('equipeModal');">
+            <div class="form-group">
+              <label class="form-label">Nome Completo</label>
+              <input type="text" class="form-input" placeholder="Ex: Carlos" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-input" placeholder="carlos@email.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nível de Acesso</label>
+              <select class="form-select" required>
+                <option value="colaborador">Colaborador</option>
+                <option value="recepcao">Recepção</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-submit">Criar Acesso</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Senha -->
+      <div class="modal-overlay" id="senhaModal" onclick="closeModal('senhaModal')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">Alterar Senha</div>
+          <form onsubmit="event.preventDefault(); showToast('Senha alterada!'); closeModal('senhaModal');">
+            <div class="form-group">
+              <label class="form-label">Senha Atual</label>
+              <input type="password" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nova Senha</label>
+              <input type="password" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar Nova Senha</label>
+              <input type="password" class="form-input" required>
+            </div>
+            <button type="submit" class="btn-submit">Atualizar Senha</button>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // 1. CONEXÃO COM O SUPABASE
+    const SUPABASE_URL = "https://yhecaaajbgetcnfdcqxj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vC-kDlXaBKScT93cWrCJSQ_ENF23HFK";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let usuarioAtual = null;
+
+    // --- LÓGICA DE PREVIEW DE IMAGEM DA LOGO ---
+    function previewLogo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Oculta o placeholder e exibe a imagem no quadrado
+          document.getElementById('logoPlaceholder').style.display = 'none';
+          document.getElementById('logoPreview').src = e.target.result;
+          document.getElementById('logoPreview').style.display = 'block';
+          
+          showToast('Imagem selecionada (falta integrar o envio)');
+          
+          // Lógica futura: 
+          // 1. Fazer upload do 'file' para o Supabase Storage
+          // 2. Pegar a URL gerada
+          // 3. Dar um UPDATE na tabela 'estabelecimentos' na coluna 'logo_url'
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // --- LÓGICA DE ABAS (TABS) ---
+    function switchTab(evento, idAba) {
+      const conteudos = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < conteudos.length; i++) {
+        conteudos[i].classList.remove("active");
+      }
+      const botoes = document.getElementsByClassName("tab-btn");
+      for (let i = 0; i < botoes.length; i++) {
+        botoes[i].classList.remove("active");
+      }
+      document.getElementById(idAba).classList.add("active");
+      evento.currentTarget.classList.add("active");
+    }
+
+    // --- LÓGICA DE MODAIS ---
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // --- LÓGICA DE TOAST ---
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 2500);
+    }
+
+    async function fazerLogout() {
+      // await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
